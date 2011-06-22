@@ -89,34 +89,15 @@ class NetcdfIndexBuilder {
 	 * Does the given variable name refer to a wdb parameter?
 	 */
 	public boolean isDatabaseField(String variableName) {
-		return index.hasParameter(variableName);
+		return index.hasParameter(config.wdbName(variableName));
 	}
 
-	/**
-	 * Does the given name refer to a level?
-	 */
-	public boolean isLevel(String levelName)
+	public Array getGridData(Variable variable, Section section) 
 	{
-		try
-		{
-			getLevelValues(levelName);
-			return true;
-		}
-		catch (Exception e)
-		{
-			return false;
-		}
+		return Array.factory(DataType.FLOAT, section.getShape());
 	}
 
-	/**
-	 * Get all values for the given level type
-	 */
-	public TreeSet<Float> getLevelValues(String levelName) {
-		return index.getLevelValues(levelName);
-	}
-
-
-	public long[] getGridIdentifiers(Variable variable, Section section) {
+	private long[] getGridIdentifiers(Variable variable, Section section) {
 		return null;
 		
 //		List<String> dimensions = getDimensionList(config.wdbName(variable.getName()));
@@ -167,52 +148,33 @@ class NetcdfIndexBuilder {
 //		return index_.getData(wdbName, start, size);
 	}
 
-	/**
-	 * Get information about the grid in use.
-	 */
-	//public const GridInformation gridInformation() {}
 
-	/**
-	 * Get a list of all times in use
-	 */
-	public TreeSet<Long> allTimes()
-	{
-		return index.getAllValidtimes();
+	private String addToString(String base, String toAdd) {
+		if ( ! base.isEmpty() )
+			return base + " " + toAdd;
+		return toAdd;
 	}
+	
+	private String getDimensionList(String parameter) {
 
-	/**
-	 * Get the reference time for the data in this object.
-	 */
-	public TreeSet<Date> referenceTimes() {
-		return index.getAllReferenceTimes();
-	}
-
-	public Vector<DataHandler> dataHandlers() { 
-		return dataHandlers; 
-	}
-
-	private List<String> getDimensionList(String parameter) {
-
-		List<String> ret = new Vector<String>();
+		String ret = "";
 		
-		//gridInformation().addSpatialDimensions(ret);
-
-		if ( index.hasManyVersions(parameter) )
-			ret.add(VersionHandler.cfName);
-		if ( index.hasManyLevels(parameter) )
-			ret.add(config.cfName(index.getLevelForParameter(parameter).getName()));
+		if ( index.hasManyReferenceTimes(parameter) )
+			ret = addToString(ret, ReferenceTimeHandler.cfName);
 		if ( index.hasManyValidTimeOffsets(parameter) )
 		{
 			if ( index.hasManyReferenceTimes(parameter) )
-				ret.add(TimeOffsetHandler.cfName);
+				ret = addToString(ret, TimeOffsetHandler.cfName);
 			else
-				ret.add(ValidTimeHandler.cfName);
+				ret = addToString(ret, ValidTimeHandler.cfName);
 		}
-		if ( index.hasManyReferenceTimes(parameter) )
-			ret.add(ReferenceTimeHandler.cfName);
+		if ( index.hasManyLevels(parameter) )
+			ret = addToString(ret, config.cfName(index.getLevelForParameter(parameter).getName()));
+		if ( index.hasManyVersions(parameter) )
+			ret = addToString(ret, VersionHandler.cfName);
 	
-		ret.add("x");
-		ret.add("y");
+		ret = addToString(ret, "x");
+		ret = addToString(ret, "y");
 		
 		return ret;
 	}
@@ -226,18 +188,13 @@ class NetcdfIndexBuilder {
 
 		for ( String parameter : index.allParameters() ) {
 
-//			GridSpecMap::const_iterator find = grids_.find(parameter);
-//			if ( find == grids_.end() )
-//				throw CDMException("Internal error - unable to find grid mapping"); // should never happen
-//			GridData::GridInformationPtr gridInfo = find->second;
-
 			String cfName = config.cfName(parameter);
 
 			Variable var = new Variable(out, null, null, cfName);
 			var.setDataType(DataType.FLOAT);
 
-//			List<String> dimensions = getDimensionList(parameter);
-//			var.setDimensions(dimensions);
+			String dimensions = getDimensionList(parameter);
+			var.setDimensions(dimensions);
 			
 			for ( Attribute attr : config.getAttributes(parameter, index.unitForParameter(parameter)) )
 				var.addAttribute(attr);
@@ -260,6 +217,4 @@ class NetcdfIndexBuilder {
 			out.addVariable(null, var);
 		}
 	}
-
-
 }

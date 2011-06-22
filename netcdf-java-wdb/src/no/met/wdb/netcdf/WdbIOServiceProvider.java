@@ -41,6 +41,7 @@ import no.met.wdb.WdbConnection;
 import no.met.wdb.store.IndexCreationException;
 
 import ucar.ma2.Array;
+import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
 import ucar.ma2.Section;
 import ucar.ma2.StructureDataIterator;
@@ -120,15 +121,17 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 
 		System.out.println("public ucar.ma2.Array readData(Variable(" + v2.getName() + "), Section(" + section.toString() + "))");
 		
-		//long gridIdentifiers[] = index.getGridIdentifiers(v2, section);
+		ucar.ma2.Array ret;
+
+		if ( index.isDatabaseField(v2.getName()) )
+			ret = index.getGridData(v2, section);
+		else
+			ret = index.getMetadata(v2, section);
 		
-//		try {
-			ucar.ma2.Array ret = index.getMetadata(v2, section);
-			return ret;
-//		}
-//		catch ( SQLException e) {
-//			throw new IOException(e);
-//		}
+		if ( ret == null )
+			throw new IOException("Internal error: Unable to read data: " + v2.getName());
+		
+		return ret;
 	}
 
 	
