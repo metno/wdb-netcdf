@@ -84,7 +84,7 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 			connection = new WdbConnection(new WdbConfiguration(raf));
 
 			Vector<String> dataProvider = new Vector<String>();
-			dataProvider.add("pgen_probability");//"met.no eceps modification");//"nordic");
+			dataProvider.add("nordic");//"pgen_probability");//"met.no eceps modification");//
 			//Vector<String> parameters = new Vector<String>();
 			//parameters.add("sea water temperature");
 			Vector<String> parameters = null;

@@ -53,6 +53,9 @@ public class WdbIndex {
 			}
 			lvl.add(d.getLevelTo());
 		}
+		
+		if ( allReferenceTimes.isEmpty() )
+			throw new IndexCreationException("No data");
 	}
 
 	public static final long UNDEFINED_GID = -1;
