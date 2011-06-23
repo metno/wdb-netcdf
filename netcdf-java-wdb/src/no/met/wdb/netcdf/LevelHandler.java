@@ -5,7 +5,6 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import no.met.wdb.Level;
-import no.met.wdb.WdbConfiguration;
 import no.met.wdb.store.WdbIndex;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
@@ -79,13 +78,13 @@ class LevelHandler implements DataHandler {
 	}
 
 	@Override
-	public boolean canHandle(String wdbName) {
+	public boolean canHandle(Variable variable) {
 
-		return index.hasLevel(wdbName);
+		return index.hasLevel(config.wdbName(variable.getName()));
 	}
 
 	@Override
-	public String getCoordinatesAttributes(String wdbName) {
+	public String getCoordinatesAttributes(String cfName) {
 		return "";
 	}
 

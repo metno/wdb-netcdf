@@ -33,6 +33,7 @@ import java.nio.channels.WritableByteChannel;
 import java.sql.SQLException;
 import java.util.Vector;
 
+import no.met.wdb.Grid;
 import no.met.wdb.GridData;
 import no.met.wdb.InvalidWdbConfigurationFileException;
 import no.met.wdb.ReadQuery;
@@ -123,8 +124,25 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 		
 		ucar.ma2.Array ret;
 
-		if ( index.isDatabaseField(v2.getName()) )
-			ret = index.getGridData(v2, section);
+		if ( index.isDatabaseField(v2.getName()) ) {
+			ret = Array.factory(DataType.FLOAT, section.getShape());
+			long[] gids = index.getGridIdentifiers(v2, section);
+
+			try {
+				int idx = 0;
+				for ( long g : gids ) {
+					Grid grid = connection.getGrid(g);
+					float[] data = grid.getGrid();
+					
+					for ( int i = 0; i < data.length; i ++ )
+						ret.setFloat(idx + i, data[i]);
+					idx += data.length;
+				}
+			}
+			catch (SQLException e) {
+				throw new IOException(e);
+			}
+		}
 		else
 			ret = index.getMetadata(v2, section);
 		

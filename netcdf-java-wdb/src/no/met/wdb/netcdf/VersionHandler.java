@@ -17,13 +17,11 @@ class VersionHandler implements DataHandler {
 	private int[] versions = null;
 	
 	public static String cfName = "ensemble_member";
-	private static String wdbName;
 
 	
 	
-	public VersionHandler(WdbIndex index, GlobalWdbConfiguration config) {
+	public VersionHandler(WdbIndex index) {
 		this.index = index;
-		wdbName = config.wdbName(cfName);
 	}
 	
 	@Override
@@ -68,12 +66,12 @@ class VersionHandler implements DataHandler {
 	}
 
 	@Override
-	public boolean canHandle(String wdbName) {
-		return wdbName.equals(this.wdbName);
+	public boolean canHandle(Variable variable) {
+		return variable.getName().equals(cfName);
 	}
 
 	@Override
-	public String getCoordinatesAttributes(String wdbName) {
+	public String getCoordinatesAttributes(String cfName) {
 		return "";
 	}
 }

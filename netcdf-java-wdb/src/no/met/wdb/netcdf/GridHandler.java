@@ -66,12 +66,12 @@ class GridHandler implements DataHandler {
 	}
 
 	@Override
-	public boolean canHandle(String wdbName) {
-		return wdbName.equals("x") || wdbName.equals("y");
+	public boolean canHandle(Variable variable) {
+		return variable.getName().equals("x") || variable.getName().equals("y");
 	}
 
 	@Override
-	public String getCoordinatesAttributes(String wdbName) {
+	public String getCoordinatesAttributes(String cfName) {
 		return "";
 	}
 

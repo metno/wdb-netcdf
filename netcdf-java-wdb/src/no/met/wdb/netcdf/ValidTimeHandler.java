@@ -6,8 +6,6 @@ import java.util.TreeSet;
 import no.met.wdb.store.WdbIndex;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
-import ucar.ma2.InvalidRangeException;
-import ucar.ma2.Section;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
@@ -16,13 +14,15 @@ import ucar.nc2.Variable;
 class ValidTimeHandler implements DataHandler {
 
 	private WdbIndex index;
+	private GlobalWdbConfiguration config;
 	private Array data = null;
 	
 	public static String cfName = "time";
 
 	
-	public ValidTimeHandler(WdbIndex index) {
+	public ValidTimeHandler(WdbIndex index, GlobalWdbConfiguration config) {
 		this.index = index;
+		this.config = config;
 	}
 	
 	
@@ -83,12 +83,13 @@ class ValidTimeHandler implements DataHandler {
 	}
 
 	@Override
-	public boolean canHandle(String wdbName) {
-		return wdbName == cfName;
+	public boolean canHandle(Variable variable) {
+		return variable.getName() == cfName;
 	}
 
 	@Override
-	public String getCoordinatesAttributes(String wdbName) {
+	public String getCoordinatesAttributes(String cfName) {
+		String wdbName = config.wdbName(cfName);
 		if ( index.hasManyReferenceTimes(wdbName) && index.hasManyValidTimeOffsets(wdbName) )
 			return cfName;
 		return "";

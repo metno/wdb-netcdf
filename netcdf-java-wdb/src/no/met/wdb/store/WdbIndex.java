@@ -58,22 +58,28 @@ public class WdbIndex {
 	public static final long UNDEFINED_GID = -1;
 	
 
-	long[] getData(String parameter, int referenceTimeStart, int referenceTimeSize, int validTimeStart, int validTimeSize, int levelStart, int levelSize, int versionStart, int versionSize) {
-		int size = referenceTimeSize * validTimeSize * levelSize * versionSize;
+	public long[] getData(String parameter, ucar.ma2.Range referenceTime, ucar.ma2.Range validTime, ucar.ma2.Range level, ucar.ma2.Range version) {
+		int size = referenceTime.length() * validTime.length() * level.length() * version.length();
 		long[] ret = new long[size];
 
 		long[][][][] d = data.get(parameter).getData();
 
+		System.out.println("Referencetime: " + referenceTime);
+		System.out.println("Validtime:     " + validTime);
+		System.out.println("Levels:        " + level);
+		System.out.println("Versions:      " + version);
+		
 		int idx = 0;
-		for ( int r = referenceTimeStart; r < referenceTimeStart + referenceTimeSize; r ++ )
-			for ( int t = validTimeStart; t < validTimeStart + validTimeSize; t ++ )
-				for ( int l = levelStart; l < levelStart + levelSize; l ++ )
-					for ( int v = versionStart; v < versionStart + versionSize; v ++)
-						ret[idx ++] = d[r][t][l][v];
+		
+		for (int r = referenceTime.first(); r <= referenceTime.last(); r += referenceTime.stride())
+			for (int t = validTime.first(); t <= validTime.last(); t += validTime.stride())
+				for (int l = level.first(); l <= level.last(); l += level.stride())
+					for ( int v = version.first(); v <= version.last(); v += version.stride() )
+						ret[idx ++] = d[r][v][l][v];
 		
 		return ret;
 	}
-	
+		
 	/**
 	 * Get a list of all parameters that are stored here
 	 */
@@ -99,7 +105,7 @@ public class WdbIndex {
 	/**
 	 * Get all available times for the given parameter
 	 */
-	public Iterable<Long> timesForParameter(String parameter) {
+	public Vector<Long> timesForParameter(String parameter) {
 		return parameterData(parameter).getValidTimes();
 	}
 

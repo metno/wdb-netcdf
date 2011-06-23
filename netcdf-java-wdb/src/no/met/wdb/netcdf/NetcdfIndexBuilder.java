@@ -1,8 +1,6 @@
 package no.met.wdb.netcdf;
 
-import java.util.Date;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.Vector;
 
 import no.met.wdb.GridData;
@@ -11,9 +9,9 @@ import no.met.wdb.store.WdbIndex;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
+import ucar.ma2.Range;
 import ucar.ma2.Section;
 import ucar.nc2.Attribute;
-import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 
@@ -26,9 +24,9 @@ class NetcdfIndexBuilder {
 	
 	private void setupHandlers(Iterable<GridData> gridData) {
 		dataHandlers.add(new ReferenceTimeHandler(index));
-		dataHandlers.add(new ValidTimeHandler(index));
+		dataHandlers.add(new ValidTimeHandler(index, config));
 		dataHandlers.add(new TimeOffsetHandler(index));
-		dataHandlers.add(new VersionHandler(index, config));
+		dataHandlers.add(new VersionHandler(index));
 		dataHandlers.add(new LevelHandler(index, config));
 		dataHandlers.add(GridHandler.get(gridData));
 	}
@@ -70,13 +68,11 @@ class NetcdfIndexBuilder {
 
 	public Array getMetadata(Variable v2, Section section) throws InvalidRangeException {
 		
-		String wdbName = config.wdbName(v2.getName());
-		
 		System.out.println(section.toString());
 		
 		Array ret = null;
 		for ( DataHandler handler : dataHandlers )
-			if ( handler.canHandle(wdbName) )
+			if ( handler.canHandle(v2) )
 				ret = handler.getData(v2);
 
 		if ( ret != null )
@@ -92,60 +88,37 @@ class NetcdfIndexBuilder {
 		return index.hasParameter(config.wdbName(variableName));
 	}
 
-	public Array getGridData(Variable variable, Section section) 
-	{
-		return Array.factory(DataType.FLOAT, section.getShape());
-	}
+	public long[] getGridIdentifiers(Variable variable, Section section) {
+			
+		String parameter = config.wdbName(variable.getName());
 
-	private long[] getGridIdentifiers(Variable variable, Section section) {
-		return null;
+		 // Remove x/y dimensions
+		// and copy to a vector, to allow calling add(idx, ...) on it
+		List<Range> sectionRanges = section.getRanges(); 
+		Vector<Range> ranges = new Vector<Range>(
+				sectionRanges.subList(0, sectionRanges.size() -2));
 		
-//		List<String> dimensions = getDimensionList(config.wdbName(variable.getName()));
-//		
-//		std::vector<size_t> start = slicer.getDimensionStartPositions();
-//		std::vector<size_t> size = slicer.getDimensionSizes();
-//
-//
-//		std::vector<size_t>::iterator st = start.begin();
-//		std::advance(st, 2); // skip x/y dimension
-//		std::vector<size_t>::iterator sz = size.begin();
-//		std::advance(sz, 2); // skip x/y dimension
-//		if ( not index_.hasManyVersions(wdbName) )
-//		{
-//			st = start.insert(st, 0);
-//			sz = size.insert(sz, 1);
-//		}
-//		++ st;
-//		++ sz;
-//		if ( not index_.hasManyLevels(wdbName) )
-//		{
-//			st = start.insert(st, 0);
-//			sz = size.insert(sz, 1);
-//		}
-//		++ st;
-//		++ sz;
-//		if ( not index_.hasManyValidTimeOffsets(wdbName) )
-//		{
-//			st = start.insert(st, 0);
-//			sz = size.insert(sz, 1);
-//		}
-//		++ st;
-//		++ sz;
-//		if ( not index_.hasManyReferenceTimes(wdbName) )
-//		{
-//			st = start.insert(st, 0);
-//			sz = size.insert(sz, 1);
-//		}
-//		++ st;
-//		++ sz;
-//
-//		if ( start.size() != 6 or size.size() != 6 )
-//			throw CDMException("Internal error: Generating indices failed");
-//
-//		std::reverse(start.begin(), start.end());
-//		std::reverse(size.begin(), size.end());
-//
-//		return index_.getData(wdbName, start, size);
+		Range oneElementRange = new Range(1);
+		int idx = 0;
+		if ( ! index.hasManyReferenceTimes(parameter) )
+			ranges.add(idx, oneElementRange);
+		idx ++;
+		if ( ! index.hasManyValidTimeOffsets(parameter) )
+			ranges.add(idx, oneElementRange);
+		idx ++;
+		if ( ! index.hasManyLevels(parameter) )
+			ranges.add(idx, oneElementRange);
+		idx ++;
+		if ( ! index.hasManyVersions(parameter) )
+			ranges.add(idx, oneElementRange);
+			
+		if ( ranges.size() != 4 )
+			throw new RuntimeException("Internal error: Generated " + ranges.size() + " indices. Needed 4");
+		
+		
+		long[] ret = index.getData(parameter, ranges.get(0), ranges.get(1), ranges.get(2), ranges.get(3));
+		
+		return ret;
 	}
 
 
@@ -173,8 +146,8 @@ class NetcdfIndexBuilder {
 		if ( index.hasManyVersions(parameter) )
 			ret = addToString(ret, VersionHandler.cfName);
 	
-		ret = addToString(ret, "x");
 		ret = addToString(ret, "y");
+		ret = addToString(ret, "x");
 		
 		return ret;
 	}
@@ -202,7 +175,7 @@ class NetcdfIndexBuilder {
 
 			String coordinates = "";
 			for ( DataHandler handler : dataHandlers ) {
-				String coordinateAddition = handler.getCoordinatesAttributes(parameter);
+				String coordinateAddition = handler.getCoordinatesAttributes(cfName);
 				if ( coordinateAddition != null && ! coordinateAddition.isEmpty()) {
 					if ( ! coordinates.isEmpty() )
 						coordinates += " ";
