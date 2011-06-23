@@ -40,6 +40,7 @@ import no.met.wdb.ReadQuery;
 import no.met.wdb.WdbConfiguration;
 import no.met.wdb.WdbConnection;
 import no.met.wdb.store.IndexCreationException;
+import no.met.wdb.store.WdbIndex;
 
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
@@ -83,7 +84,7 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 			connection = new WdbConnection(new WdbConfiguration(raf));
 
 			Vector<String> dataProvider = new Vector<String>();
-			dataProvider.add("nordic");//"met.no eceps modification");//, "pgen_probability"
+			dataProvider.add("pgen_probability");//"met.no eceps modification");//"nordic");
 			//Vector<String> parameters = new Vector<String>();
 			//parameters.add("sea water temperature");
 			Vector<String> parameters = null;
@@ -132,17 +133,23 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 			try {
 				int idx = 0;
 				for ( long g : gids ) {
-					Grid grid = connection.getGrid(g);
-					float[] data = grid.getGrid();
-					
 					int rank = section.getRank();
 					Range yRange = section.getRange(rank -2);
 					Range xRange = section.getRange(rank -1);
-					for ( int y = yRange.first(); y <= yRange.last(); y += yRange.stride() )
-						for ( int x = xRange.first(); x <= xRange.last(); x += xRange.stride() ) {
-							int gridIdx = (y * grid.getNumberX()) + x;
-							ret.setFloat(idx ++, data[gridIdx]);
-						}
+
+					if ( g != WdbIndex.UNDEFINED_GID ) {
+						Grid grid = connection.getGrid(g);
+						float[] data = grid.getGrid();
+						for ( int y = yRange.first(); y <= yRange.last(); y += yRange.stride() )
+							for ( int x = xRange.first(); x <= xRange.last(); x += xRange.stride() ) {
+								int gridIdx = (y * grid.getNumberX()) + x;
+								ret.setFloat(idx ++, data[gridIdx]);
+							}
+					}
+					else
+						for ( int y = yRange.first(); y <= yRange.last(); y += yRange.stride() )
+							for ( int x = xRange.first(); x <= xRange.last(); x += xRange.stride() )
+								ret.setFloat(idx ++, Float.NaN);
 				}
 			}
 			catch (SQLException e) {

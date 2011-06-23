@@ -75,7 +75,7 @@ public class WdbIndex {
 			for (int t = validTime.first(); t <= validTime.last(); t += validTime.stride())
 				for (int l = level.first(); l <= level.last(); l += level.stride())
 					for ( int v = version.first(); v <= version.last(); v += version.stride() )
-						ret[idx ++] = d[r][v][l][v];
+						ret[idx ++] = d[r][t][l][v];
 		
 		return ret;
 	}
