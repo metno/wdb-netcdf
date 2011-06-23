@@ -44,6 +44,7 @@ import no.met.wdb.store.IndexCreationException;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
+import ucar.ma2.Range;
 import ucar.ma2.Section;
 import ucar.ma2.StructureDataIterator;
 import ucar.nc2.NetcdfFile;
@@ -134,9 +135,14 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 					Grid grid = connection.getGrid(g);
 					float[] data = grid.getGrid();
 					
-					for ( int i = 0; i < data.length; i ++ )
-						ret.setFloat(idx + i, data[i]);
-					idx += data.length;
+					int rank = section.getRank();
+					Range yRange = section.getRange(rank -2);
+					Range xRange = section.getRange(rank -1);
+					for ( int y = yRange.first(); y <= yRange.last(); y += yRange.stride() )
+						for ( int x = xRange.first(); x <= xRange.last(); x += xRange.stride() ) {
+							int gridIdx = (y * grid.getNumberX()) + x;
+							ret.setFloat(idx ++, data[gridIdx]);
+						}
 				}
 			}
 			catch (SQLException e) {
