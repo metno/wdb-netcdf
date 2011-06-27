@@ -78,7 +78,7 @@ public class WdbConnection {
 
 		Statement st = connection.createStatement();
 		st.setFetchSize(64);
-		System.out.println(query.toString());
+		//System.out.println(query.toString());
 		ResultSet result = st.executeQuery(query.toString());
 
 		Vector<GridData> ret = new Vector<GridData>();
@@ -101,7 +101,7 @@ public class WdbConnection {
 		
 		Statement st = connection.createStatement();
 		String query = Grid.query(gridId);
-		System.out.println(query);
+		//System.out.println(query);
 		ResultSet result = st.executeQuery(query);
 
 		if ( ! result.next() )
@@ -122,7 +122,7 @@ public class WdbConnection {
 				"incrementx, incrementy, startx, starty, projdefinition " +
 				"FROM wci.getplaceregulargrid(" + quote(gridName) + ")";
 		
-		System.out.println(query);
+		//System.out.println(query);
 		
 		Statement st = connection.createStatement();
 		ResultSet result = st.executeQuery(query);

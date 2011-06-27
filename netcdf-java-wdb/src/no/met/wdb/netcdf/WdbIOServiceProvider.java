@@ -66,8 +66,6 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 			new WdbConfiguration(raf);
 		}
 		catch ( JDOMException e ) {
-			System.out.println(e);
-			e.printStackTrace();
 			return false;
 		}
 		return true;
@@ -107,7 +105,7 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 	public ucar.ma2.Array readData(Variable v2, Section section)
 			throws java.io.IOException, InvalidRangeException {
 
-		System.out.println("public ucar.ma2.Array readData(Variable(" + v2.getName() + "), Section(" + section.toString() + "))");
+		//System.out.println("public ucar.ma2.Array readData(Variable(" + v2.getName() + "), Section(" + section.toString() + "))");
 		
 		ucar.ma2.Array ret;
 
@@ -156,7 +154,7 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 			WritableByteChannel channel) throws java.io.IOException,
 			InvalidRangeException {
 
-		System.out.println("public long readToByteChannel(Variable v2, Section section,	WritableByteChannel channel)");
+		//System.out.println("public long readToByteChannel(Variable v2, Section section,	WritableByteChannel channel)");
 		
 		throw new InvalidRangeException();
 	}
@@ -166,7 +164,7 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 	public Array readSection(ParsedSectionSpec cer) throws IOException,
 			InvalidRangeException {
 		
-		System.out.println("public Array readSection(ParsedSectionSpec cer)");
+		//System.out.println("public Array readSection(ParsedSectionSpec cer)");
 		
 		return null;
 	}
@@ -175,7 +173,7 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 	public StructureDataIterator getStructureIterator(Structure s,
 			int bufferSize) throws java.io.IOException {
 		
-		System.out.println("public StructureDataIterator getStructureIterator(Structure s, int bufferSize)");
+		//System.out.println("public StructureDataIterator getStructureIterator(Structure s, int bufferSize)");
 		
 		return null;
 	}

@@ -67,11 +67,6 @@ public class WdbIndex {
 
 		long[][][][] d = data.get(parameter).getData();
 
-		System.out.println("Referencetime: " + referenceTime);
-		System.out.println("Validtime:     " + validTime);
-		System.out.println("Levels:        " + level);
-		System.out.println("Versions:      " + version);
-		
 		int idx = 0;
 		
 		for (int r = referenceTime.first(); r <= referenceTime.last(); r += referenceTime.stride())

@@ -70,7 +70,7 @@ class NetcdfIndexBuilder {
 
 	public Array getMetadata(Variable v2, Section section) throws InvalidRangeException {
 		
-		System.out.println(section.toString());
+		//System.out.println(section.toString());
 		
 		Array ret = null;
 		for ( DataHandler handler : dataHandlers )
