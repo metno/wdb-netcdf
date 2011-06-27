@@ -27,9 +27,9 @@ public class NetcdfIndexBuilderTest {
 	private Wdb2NetcdfNameTranslator translator = new Wdb2NetcdfNameTranslator();
 	
 	@Before
-	public void setUp() {
+	public void setUp() throws Exception {
 		ncfile = new TestingNetcdfFile();
-		indexBuilder = new NetcdfIndexBuilder(new GlobalWdbConfiguration());
+		indexBuilder = new NetcdfIndexBuilder(new GlobalWdbConfiguration("etc/wdb_config.xml"));
 	}
 	
 	@Test

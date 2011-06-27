@@ -62,6 +62,8 @@ class NetcdfIndexBuilder {
 	
 	public void populate(NetcdfFile out) {
 
+		for ( Attribute attr : config.getGlobalAttributes() )
+			out.addAttribute(null, attr);
 		addDimensions(out);
 		addParameterVariables(out);
 	}

@@ -31,16 +31,11 @@ package no.met.wdb.netcdf;
 import java.io.IOException;
 import java.nio.channels.WritableByteChannel;
 import java.sql.SQLException;
-import java.util.Vector;
-
-import org.ini4j.InvalidIniFormatException;
 import org.jdom.JDOMException;
 
 import no.met.wdb.Grid;
 import no.met.wdb.GridData;
-import no.met.wdb.ReadQuery;
 import no.met.wdb.WdbConnection;
-import no.met.wdb.store.IndexCreationException;
 import no.met.wdb.store.WdbIndex;
 
 import ucar.ma2.Array;
@@ -94,7 +89,7 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 
 			Iterable<GridData> gridData = connection.readGid(configuration.getReadQuery());
 			
-			index = new NetcdfIndexBuilder(gridData, new GlobalWdbConfiguration());
+			index = new NetcdfIndexBuilder(gridData, new GlobalWdbConfiguration("etc/wdb_config.xml"));
 
 			if ( cancelTask != null && cancelTask.isCancel() )
 				return;
