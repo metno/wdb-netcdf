@@ -33,11 +33,12 @@ import java.nio.channels.WritableByteChannel;
 import java.sql.SQLException;
 import java.util.Vector;
 
+import org.ini4j.InvalidIniFormatException;
+import org.jdom.JDOMException;
+
 import no.met.wdb.Grid;
 import no.met.wdb.GridData;
-import no.met.wdb.InvalidWdbConfigurationFileException;
 import no.met.wdb.ReadQuery;
-import no.met.wdb.WdbConfiguration;
 import no.met.wdb.WdbConnection;
 import no.met.wdb.store.IndexCreationException;
 import no.met.wdb.store.WdbIndex;
@@ -66,34 +67,32 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 	@Override
 	public boolean isValidFile(ucar.unidata.io.RandomAccessFile raf)
 			throws IOException {
-		raf.seek(0);
 		try {
 			new WdbConfiguration(raf);
 		}
-		catch ( InvalidWdbConfigurationFileException e ) {
+		catch ( JDOMException e ) {
+			System.out.println(e);
+			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
 
 	
+	
 	@Override
 	public void open(ucar.unidata.io.RandomAccessFile raf, NetcdfFile ncfile,
 			CancelTask cancelTask) throws IOException {
 		try {
-			connection = new WdbConnection(new WdbConfiguration(raf));
 
-			Vector<String> dataProvider = new Vector<String>();
-			dataProvider.add("nordic");//"pgen_probability");//"met.no eceps modification");//
-			//Vector<String> parameters = new Vector<String>();
-			//parameters.add("sea water temperature");
-			Vector<String> parameters = null;
-			ReadQuery readQuery = new ReadQuery(dataProvider, null, null, null, parameters, null, null);
+			WdbConfiguration configuration = new WdbConfiguration(raf);
 			
+			connection = new WdbConnection(configuration.getDatabaseConnectionSpecification());
+
 			if ( cancelTask != null && cancelTask.isCancel() )
 				return;
 
-			Iterable<GridData> gridData = connection.readGid(readQuery);
+			Iterable<GridData> gridData = connection.readGid(configuration.getReadQuery());
 			
 			index = new NetcdfIndexBuilder(gridData, new GlobalWdbConfiguration());
 
@@ -104,18 +103,9 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 			
 			ncfile.finish();
 		}
-		catch ( InvalidWdbConfigurationFileException e ) {
+		catch ( Exception e ) {
 			throw new IOException(e);
 		}
-		catch ( IndexCreationException e ) {
-			throw new IOException(e);
-		}
-		catch ( ClassNotFoundException e ) {
-			throw new IOException(e);
-		} 
-		catch ( SQLException e ) {
-			throw new IOException(e);
-		} 
 	}
 
 	@Override

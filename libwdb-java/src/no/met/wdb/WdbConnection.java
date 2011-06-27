@@ -16,12 +16,12 @@ public class WdbConnection {
 	
 	private Connection connection;
 	
-	public WdbConnection(WdbConfiguration configuration) throws ClassNotFoundException, SQLException {
+	public WdbConnection(DatabaseConnectionSpecification configuration) throws ClassNotFoundException, SQLException {
 		this(configuration, true);
 	}
 
 	
-	public WdbConnection(WdbConfiguration configuration, boolean alsoCallWciBegin) throws ClassNotFoundException, SQLException {
+	public WdbConnection(DatabaseConnectionSpecification configuration, boolean alsoCallWciBegin) throws ClassNotFoundException, SQLException {
 
 		if ( ! driverInitialized ) {
 			Class.forName("org.postgresql.Driver");

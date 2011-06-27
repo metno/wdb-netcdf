@@ -1,10 +1,11 @@
 
 
+import java.io.File;
 import java.util.Vector;
 
 import no.met.wdb.GridData;
 import no.met.wdb.ReadQuery;
-import no.met.wdb.WdbConfiguration;
+import no.met.wdb.DatabaseConnectionSpecification;
 import no.met.wdb.WdbConnection;
 
 
@@ -12,7 +13,7 @@ public class Main {
 	
 	static void useWdbConnection() throws Exception
 	{
-		WdbConfiguration config = new WdbConfiguration("/disk1/wdb/etc/wdb.conf");
+		DatabaseConnectionSpecification config = new DatabaseConnectionSpecification(new File("/disk1/wdb/etc/wdb.conf"));
 		System.out.println(config.jdbcConnectionString());
 		
 		WdbConnection connection = new WdbConnection(config);

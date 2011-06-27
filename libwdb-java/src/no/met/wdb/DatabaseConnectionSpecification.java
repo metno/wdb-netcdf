@@ -29,6 +29,7 @@ package no.met.wdb;
 
 
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.DataInput;
@@ -37,22 +38,29 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class WdbConfiguration {
+public class DatabaseConnectionSpecification {
 
 	private String database = null;
 	private String host = null;
-	private int port = -1;
+	private int port = PORT_NOT_SPECIFIED;
 	private String user = null;
 
+	public static final int PORT_NOT_SPECIFIED = -1;
 	
-	
-	public WdbConfiguration(String configFile)  throws InvalidWdbConfigurationFileException, IOException, FileNotFoundException {
-		this(new RandomAccessFile(configFile, "r"));
+
+	public DatabaseConnectionSpecification(String database, String host, int port, String user) {
+		this.database = database;
+		this.host = host;
+		this.port = port;
+		this.user = user;
 	}
 
 	
-	
-	public WdbConfiguration(DataInput configurationFile) throws InvalidWdbConfigurationFileException, IOException {
+	public DatabaseConnectionSpecification(File configFile)  throws InvalidDatabaseConnectionSpecificationException, IOException, FileNotFoundException {
+		this(new RandomAccessFile(configFile, "r"));
+	}
+
+	public DatabaseConnectionSpecification(DataInput configurationFile) throws InvalidDatabaseConnectionSpecificationException, IOException {
 		
 		Pattern p = Pattern.compile("(database|host|port|user)\\s*=\\s*(.*)");
 
@@ -66,7 +74,7 @@ public class WdbConfiguration {
 			
 			Matcher m = p.matcher(s);
 			if ( ! m.matches() )
-				throw new InvalidWdbConfigurationFileException("Invalid line in file: " + s);
+				throw new InvalidDatabaseConnectionSpecificationException("Invalid line in file: " + s);
 			
 			String key = m.group(1);
 			String val = m.group(2);
@@ -80,13 +88,13 @@ public class WdbConfiguration {
 					port = Integer.parseInt(val);
 				}
 				catch (NumberFormatException e) {
-					throw new InvalidWdbConfigurationFileException("Unable to parse port number: " + s);
+					throw new InvalidDatabaseConnectionSpecificationException("Unable to parse port number: " + s);
 				}
 			}
 			else if ( key.equals("user") )
 				user = val;
 			else
-				throw new InvalidWdbConfigurationFileException("Unexpected value in configuration file: " + s);
+				throw new InvalidDatabaseConnectionSpecificationException("Unexpected value in configuration file: " + s);
 		}
 	}
 
@@ -97,7 +105,7 @@ public class WdbConfiguration {
 		StringBuilder ret = new StringBuilder();
 		ret.append("jdbc:postgresql://");
 		ret.append(getHost());
-		if ( port != -1 ) {
+		if ( port != PORT_NOT_SPECIFIED ) {
 			ret.append(":");
 			ret.append(getPort());
 		}
@@ -126,7 +134,7 @@ public class WdbConfiguration {
 	
 	
 	public int getPort() {
-		if ( port == -1 )
+		if ( port == PORT_NOT_SPECIFIED )
 			return 5432; // default postgresql port
 		return port;
 	}
@@ -135,5 +143,23 @@ public class WdbConfiguration {
 	
 	public String getUser() {
 		return user;
+	}
+	
+	@Override
+	public String toString() {
+		return "dbname=" + database + " host=" + host + " port=" + port + " user=" + user;
+	}
+	
+	@Override
+	public boolean equals(Object object) {
+
+		DatabaseConnectionSpecification other = (DatabaseConnectionSpecification) object;
+		if ( other == null )
+			return false;
+		
+		return database.equals(other.database) &&
+				host.equals(other.host) &&
+				port == other.port &&
+				user.equals(other.user);
 	}
 }
