@@ -31,21 +31,43 @@ public class GlobalWdbConfiguration {
 		Element wdb_netcdf_config = document.getRootElement();
 		
 		Element global_attributes = wdb_netcdf_config.getChild("global_attributes");
-		
 		globalAttributes = parseAttributes(global_attributes);
+		
+		Element wdb_parameters = wdb_netcdf_config.getChild("wdb_parameters");
+		if ( wdb_parameters != null ) {
+			for ( Element e : (List<Element>) wdb_parameters.getChildren("level_parameter") )
+				addParameterConfiguration(e);
+			for ( Element e : (List<Element>) wdb_parameters.getChildren("value_parameter") )
+				addParameterConfiguration(e);
+		}
 	}
 	
-	private List<ucar.nc2.Attribute> parseAttributes(Element parent) {
-		
-		List<ucar.nc2.Attribute> ret = new Vector<ucar.nc2.Attribute>();
-		
-		List<Element> attributes = parent.getChildren("attribute");
-		for ( Element e : attributes ) {
-			String name = e.getAttribute("name").getValue();
-			String value = e.getAttribute("value").getValue();
-			ret.add(new ucar.nc2.Attribute(name, value));
+	private void addParameterConfiguration(Element e) {
+		String wdbName = e.getAttributeValue("wdbname");
+		if ( wdbName == null )
+			return; // wtf?
+
+		String cfName = e.getAttributeValue("cfname");
+		if ( cfName != null ) {
+			wdb2cf.put(wdbName, cfName);
+			cf2wdb.put(cfName, wdbName);
 		}
 		
+		attributes.put(wdbName, parseAttributes(e));
+	}
+	
+	private Vector<ucar.nc2.Attribute> parseAttributes(Element parent) {
+
+		Vector<ucar.nc2.Attribute> ret = new Vector<ucar.nc2.Attribute>();
+		
+		if ( parent != null ) {
+			List<Element> attributes = parent.getChildren("attribute");
+			for ( Element e : attributes ) {
+				String name = e.getAttribute("name").getValue();
+				String value = e.getAttribute("value").getValue();
+				ret.add(new ucar.nc2.Attribute(name, value));
+			}
+		}
 		return ret;
 	}
 	
@@ -58,8 +80,12 @@ public class GlobalWdbConfiguration {
 	public String cfName(String wdbName) {
 		String specialTranslation = wdb2cf.get(wdbName);
 		if ( specialTranslation == null )
-			return wdbName.replace(' ', '_');
+			return defaultCfName(wdbName);
 		return specialTranslation;
+	}
+	
+	private static String defaultCfName(String wdbName) {
+		return wdbName.replace(' ', '_');
 	}
 
 	/**
