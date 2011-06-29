@@ -21,14 +21,18 @@ class NetcdfIndexBuilder {
 	private GlobalWdbConfiguration config;
 	private Vector<DataHandler> dataHandlers = new Vector<DataHandler>();
 	
+	private GridHandler gridHandler;
 	
 	private void setupHandlers(Iterable<GridData> gridData) {
+		
+		gridHandler = new GridHandler(gridData);
+		
+		dataHandlers.add(gridHandler);
 		dataHandlers.add(new ReferenceTimeHandler(index));
 		dataHandlers.add(new ValidTimeHandler(index, config));
 		dataHandlers.add(new TimeOffsetHandler(index));
 		dataHandlers.add(new VersionHandler(index));
 		dataHandlers.add(new LevelHandler(index, config));
-		dataHandlers.add(GridHandler.get(gridData));
 	}
 	
 	public NetcdfIndexBuilder(Iterable<GridData> gridData, GlobalWdbConfiguration config) throws IndexCreationException {
@@ -53,7 +57,7 @@ class NetcdfIndexBuilder {
 	 * @param gridData input to WdbIndex object creation
 	 * @param out the object to be populated
 	 */
-	void populate(Iterable<GridData> gridData, NetcdfFile out) throws IndexCreationException {
+	void populate(List<GridData> gridData, NetcdfFile out) throws IndexCreationException {
 		index = new WdbIndex(gridData);
 		setupHandlers(gridData);
 		populate(out);
@@ -148,8 +152,8 @@ class NetcdfIndexBuilder {
 		if ( index.hasManyVersions(parameter) )
 			ret = addToString(ret, VersionHandler.cfName);
 	
-		ret = addToString(ret, "y");
-		ret = addToString(ret, "x");
+		ret = addToString(ret, gridHandler.getYDimension());
+		ret = addToString(ret, gridHandler.getXDimension());
 		
 		return ret;
 	}
