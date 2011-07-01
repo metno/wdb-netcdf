@@ -1,6 +1,7 @@
 package no.met.wdb.netcdf;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import no.met.wdb.GridData;
@@ -12,6 +13,7 @@ import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 import ucar.unidata.geoloc.ProjectionImpl;
+import ucar.unidata.util.Parameter;
 import ucar.units.Unit;
 import ucar.units.UnitException;
 import ucar.units.UnitFormat;
@@ -25,8 +27,8 @@ class GridHandler implements DataHandler {
 	private String twoDimensionX = "";
 	private String twoDimensionY = "";
 	
-	private PlaceRegularGrid grid = null;
-	private ProjectionSpecification projection = null;
+	private PlaceRegularGrid grid;
+	private ProjectionSpecification projection;
 	private String coordinates = "";
 	
 	public GridHandler(Iterable<GridData> gridData) {
@@ -37,6 +39,8 @@ class GridHandler implements DataHandler {
 			grid = d.getGrid();
 			projection = new ProjectionSpecification(grid.getProjDefinition());
 		}
+		else
+			throw new RuntimeException("No data");
 	}
 
 	
@@ -74,8 +78,29 @@ class GridHandler implements DataHandler {
 		return v.getName();
 	}
 	
+	private String getProjectionVariableName() {
+
+		return projection.getProjection().getName();
+	}
+	
+	private void addProjectionVariable(NetcdfFile out) {
+
+		Variable var = new Variable(out, null, null, getProjectionVariableName(), DataType.CHAR, null);
+		
+		for ( Parameter p : projection.getProjection().getProjectionParameters() )
+			var.addAttribute(new Attribute(p));
+		var.addAttribute(new Attribute("proj4", projection.getProjDefinition()));
+		
+		out.addVariable(null, var);
+	}
+	
 	@Override
 	public void addToNetcdfFile(NetcdfFile out) {
+		
+		// TODO: correct names for rotated lat/lon grids
+		// TODO: add projection variable
+		
+		addProjectionVariable(out);
 		
 		if ( projection.getProjection().isLatLon() ) {
 			oneDimensionX = createDimensionVariable(out, "longitude", grid.getNumberX(),
@@ -141,6 +166,9 @@ class GridHandler implements DataHandler {
 			convertLatLon();
 			return Array.factory(DataType.FLOAT, variable.getShape(), points[0]);
 		}
+		else if ( var.equals(getProjectionVariableName()) ) {
+			return Array.factory(variable.getDataType(), variable.getShape());
+		}
 		throw new RuntimeException("Internal error: No such grid handler variable: " + variable.getName());
 	}
 
@@ -151,7 +179,8 @@ class GridHandler implements DataHandler {
 		return oneDimensionX.equals(name)
 				|| oneDimensionY.equals(name)
 				|| twoDimensionX.equals(name)
-				|| twoDimensionY.equals(name);
+				|| twoDimensionY.equals(name)
+				|| getProjectionVariableName().equals(name);
 	}
 
 	@Override

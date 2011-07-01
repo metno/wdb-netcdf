@@ -18,9 +18,12 @@ class ProjectionSpecification {
 	
 	
 	private ProjectionImpl projection;
+	private String projDefinition;
 	private Map<String, String> definition = new HashMap<String, String>();;
 
 	public ProjectionSpecification(String projDefinition) {
+		
+		this.projDefinition = projDefinition;
 		
 		for ( String s : projDefinition.split("\\s+") ) {
 			Matcher m = p.matcher(s);
@@ -52,6 +55,10 @@ class ProjectionSpecification {
 		return projection;
 	}
 
+	
+	public String getProjDefinition() {
+		return projDefinition;
+	}
 
 
 	public Map<String, String> getDefinition() {
@@ -84,11 +91,9 @@ class ProjectionSpecification {
 		
 		double lon_0 = get("lon_0", definition);
 
-		System.out.println("lat_0=" + lat_0 + " lat_ts=" + lat_ts + " lon_0=" + lon_0);
-		
-		
 		Stereographic ret = new Stereographic(lat_ts, lat_0, lon_0, true);
-		System.out.println(ret.getProjectionParameters());
+		
+		ret.setName("projection_stereographic");
 		
 		return ret;
 	}
@@ -107,7 +112,9 @@ class ProjectionSpecification {
 		if ( ellps.equals("WGS84") ) {
 			double axis = 6378137.0;
 			double inverseFlattening = 298.257223563;
-			return new UtmProjection(axis, inverseFlattening, zone, north);
+			ProjectionImpl ret =  new UtmProjection(axis, inverseFlattening, zone, north);
+			ret.setName("projection_utm" + zone);
+			return ret;
 		}
 		// TODO: add others as needed
 
@@ -133,10 +140,12 @@ class ProjectionSpecification {
 		if ( something != 0 )
 			throw new IllegalArgumentException("o_lon_b is not supported");
 		
-		return new RotatedLatLon(latitudeOfSouthernPoleInDegrees, longitudeOfSouthernPoleInDegrees, 0);
+		ProjectionImpl ret = new RotatedLatLon(latitudeOfSouthernPoleInDegrees, longitudeOfSouthernPoleInDegrees, 0);
+		ret.setName("projection_rotated_latitude_longitude");
+		return ret;
 	}
 
 	static private ProjectionImpl getLongLatProjection(Map<String, String> definition) {
-		return new LatLonProjection("longlat");
+		return new LatLonProjection("projection_longlat");
 	}
 }
