@@ -181,12 +181,8 @@ class GridHandler implements DataHandler {
 				}
 			}
 
-			for ( Map.Entry<String, String> e : projection.getDefinition().entrySet() )
-				System.out.println(e);
-			
 			String unit = projection.getDefinition().get("units");
 			if ( unit != null ) {
-				System.out.println(">>> " + unit);
 				try {
 					UnitFormat format = UnitFormatManager.instance();
 					Unit to = format.parse(unit);
