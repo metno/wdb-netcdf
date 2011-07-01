@@ -7,17 +7,21 @@ import java.util.regex.Pattern;
 
 import ucar.unidata.geoloc.ProjectionImpl;
 import ucar.unidata.geoloc.projection.LatLonProjection;
+import ucar.unidata.geoloc.projection.RotatedLatLon;
 import ucar.unidata.geoloc.projection.Stereographic;
 import ucar.unidata.geoloc.projection.UtmProjection;
 
 
-class ProjectionFactory {
+class ProjectionSpecification {
 
 	static private Pattern p = Pattern.compile("\\+([0-9a-z_]+)=?(.*)");
 	
-	static public ProjectionImpl getProjection(String projDefinition) {
+	
+	private ProjectionImpl projection;
+	private Map<String, String> definition = new HashMap<String, String>();;
 
-		HashMap<String, String> definition = new HashMap<String, String>();		
+	public ProjectionSpecification(String projDefinition) {
+		
 		for ( String s : projDefinition.split("\\s+") ) {
 			Matcher m = p.matcher(s);
 			
@@ -29,15 +33,32 @@ class ProjectionFactory {
 		if ( projectionType == null )
 			throw new IllegalArgumentException("Unable to parse proj string: " + projDefinition);
 		else if ( projectionType.equals("stere") )
-			return getStereographicProjection(definition);
+			projection = getStereographicProjection(definition);
 		else if ( projectionType.equals("utm") )
-			return getUtmProjection(definition);
+			projection = getUtmProjection(definition);
 		else if ( projectionType.equals("ob_tran") )
-			return getObliqueProjection(definition);
+			projection = getObliqueProjection(definition);
 		else if ( projectionType.equals("longlat") )
-			return getLongLatProjection(definition);
+			projection = getLongLatProjection(definition);
 		else throw new IllegalArgumentException("Unhandled projection type: " + projectionType);
 	}
+	
+	static ProjectionImpl getProjection(String projDefinition) {
+		return new ProjectionSpecification(projDefinition).getProjection();
+	}
+	
+
+	public ProjectionImpl getProjection() {
+		return projection;
+	}
+
+
+
+	public Map<String, String> getDefinition() {
+		return definition;
+	}
+
+
 
 	static private double get(String what, Map<String, String> definition) {
 		String ret = definition.get(what);
@@ -94,22 +115,25 @@ class ProjectionFactory {
 	}
 
 	static private ProjectionImpl getObliqueProjection(Map<String, String> definition) {
+
+		for ( Map.Entry<String,String> entry : definition.entrySet() )
+			System.out.println("definition[" + entry.getKey() + "] = " + entry.getValue());
 		
 		String realProjection = definition.get("o_proj");
 		if ( realProjection == null )
 			throw new IllegalArgumentException("Missing projection parameter");
-		else if ( realProjection != "longlat" )
+		else if ( ! realProjection.equals("longlat") )
 			throw new IllegalArgumentException("oblique transformations currently only supports longlat grids");
 
 		// o_lat o_lon = pole position
 		
-		double northPoleLat = get("o_lat_p", definition, 0);
-		double northPoleLon = get("o_lon_b", definition, 0);
-		double angle = get("lon_0", definition, 0);
+		double latitudeOfSouthernPoleInDegrees = - get("o_lat_p", definition, 0); // 23.5
+		double longitudeOfSouthernPoleInDegrees = get("lon_0", definition, 0); // -24
+		double something = get("o_lon_b", definition, 0); // 0
+		if ( something != 0 )
+			throw new IllegalArgumentException("o_lon_b is not supported");
 		
-		//new RotatedLatLon(southPoleLat, soutPoleLon, southPoleAngle);
-		
-		throw new IllegalArgumentException("Unhandled projection type: ob_tran");
+		return new RotatedLatLon(latitudeOfSouthernPoleInDegrees, longitudeOfSouthernPoleInDegrees, 0);
 	}
 
 	static private ProjectionImpl getLongLatProjection(Map<String, String> definition) {

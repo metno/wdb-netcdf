@@ -1,6 +1,8 @@
 package no.met.wdb.netcdf;
 
 import java.util.Iterator;
+import java.util.Map;
+
 import no.met.wdb.GridData;
 import no.met.wdb.PlaceRegularGrid;
 import ucar.ma2.Array;
@@ -10,6 +12,11 @@ import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 import ucar.unidata.geoloc.ProjectionImpl;
+import ucar.units.Unit;
+import ucar.units.UnitException;
+import ucar.units.UnitFormat;
+import ucar.units.UnitFormatManager;
+
 
 class GridHandler implements DataHandler {
 
@@ -19,7 +26,7 @@ class GridHandler implements DataHandler {
 	private String twoDimensionY = "";
 	
 	private PlaceRegularGrid grid = null;
-	private ProjectionImpl projection = null;
+	private ProjectionSpecification projection = null;
 	private String coordinates = "";
 	
 	public GridHandler(Iterable<GridData> gridData) {
@@ -28,7 +35,7 @@ class GridHandler implements DataHandler {
 		if ( it.hasNext() ) {
 			GridData d = it.next();
 			grid = d.getGrid();
-			projection = ProjectionFactory.getProjection(grid.getProjDefinition());
+			projection = new ProjectionSpecification(grid.getProjDefinition());
 		}
 	}
 
@@ -70,7 +77,7 @@ class GridHandler implements DataHandler {
 	@Override
 	public void addToNetcdfFile(NetcdfFile out) {
 		
-		if ( projection.isLatLon() ) {
+		if ( projection.getProjection().isLatLon() ) {
 			oneDimensionX = createDimensionVariable(out, "longitude", grid.getNumberX(),
 					new Attribute("long_name", "longitude"),
 					new Attribute("standard_name", "longitude"),
@@ -164,16 +171,36 @@ class GridHandler implements DataHandler {
 			float startY = grid.getStartY();
 			float incrementY = grid.getIncrementY();
 			
+			
 			int pos = 0;
 			for ( int y = 0; y < grid.getNumberY(); y ++ ) {
 				for ( int x = 0; x < grid.getNumberX(); x ++ ) {
-					points[0][pos] = startY + (incrementY * y);
-					points[1][pos] = startX + (incrementX * x);
+					points[0][pos] = (startX + (incrementX * x));// * 1000;
+					points[1][pos] = (startY + (incrementY * y));// * 1000;
 					pos ++;
 				}
 			}
-//			points = projection.latLonToProj(points);
-			points = projection.projToLatLon(points);
+
+			for ( Map.Entry<String, String> e : projection.getDefinition().entrySet() )
+				System.out.println(e);
+			
+			String unit = projection.getDefinition().get("units");
+			if ( unit != null ) {
+				System.out.println(">>> " + unit);
+				try {
+					UnitFormat format = UnitFormatManager.instance();
+					Unit to = format.parse(unit);
+					Unit from = format.parse("km");
+	
+					to.convertTo(points[0], from, points[0]);
+					to.convertTo(points[1], from, points[1]);
+				}
+				catch ( UnitException e ) {
+					System.out.println(e.getLocalizedMessage());
+				}
+			}
+			
+			points = projection.getProjection().projToLatLon(points);
 		}
 	}
 	

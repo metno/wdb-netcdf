@@ -6,6 +6,8 @@ import org.junit.Test;
 
 import ucar.unidata.geoloc.LatLonPoint;
 import ucar.unidata.geoloc.ProjectionImpl;
+import ucar.unidata.geoloc.ProjectionPoint;
+import ucar.unidata.util.Parameter;
 
 // To test:
 //
@@ -22,11 +24,12 @@ import ucar.unidata.geoloc.ProjectionImpl;
 
 public class ProjectionFactoryTest {
 
-	private static final double e = 0.00001;
+	//private static final double e = 0.00001;
+	private static final double e = 0.005;
 
 	@Test
 	public void testLongLatProjection() {
-		ProjectionImpl impl = ProjectionFactory.getProjection("+proj=longlat +a=6367470.0 +towgs84=0,0,0 +no_defs");
+		ProjectionImpl impl = ProjectionSpecification.getProjection("+proj=longlat +a=6367470.0 +towgs84=0,0,0 +no_defs");
 		LatLonPoint p = impl.projToLatLon(10, 20);
 		
 		assertEquals(10, p.getLongitude(), e);
@@ -35,7 +38,7 @@ public class ProjectionFactoryTest {
 
 	@Test
 	public void testUtmProjectionZone33() {
-		ProjectionImpl impl = ProjectionFactory.getProjection("+proj=utm +zone=33 +ellps=WGS84 +datum=WGS84 +units=m +no_defs");
+		ProjectionImpl impl = ProjectionSpecification.getProjection("+proj=utm +zone=33 +ellps=WGS84 +datum=WGS84 +units=m +no_defs");
 		LatLonPoint p = impl.projToLatLon(10, 20);
 		
 		System.out.println(p.toString());
@@ -46,7 +49,7 @@ public class ProjectionFactoryTest {
 
 	@Test
 	public void testUtmProjectionZone32() {
-		ProjectionImpl impl = ProjectionFactory.getProjection("+proj=utm +zone=32 +ellps=WGS84 +datum=WGS84 +units=m +no_defs");
+		ProjectionImpl impl = ProjectionSpecification.getProjection("+proj=utm +zone=32 +ellps=WGS84 +datum=WGS84 +units=m +no_defs");
 		LatLonPoint p = impl.projToLatLon(10, 20);
 		
 		System.out.println(p.toString());
@@ -58,13 +61,38 @@ public class ProjectionFactoryTest {
 @Test
 public void testStereoGraphicProjection() {
 	
-	ProjectionImpl impl = ProjectionFactory.getProjection("+proj=stere +lat_0=90 +lon_0=58 +lat_ts=60 +a=6371000 +units=m +no_defs");
-	LatLonPoint p = impl.projToLatLon(0, 50000);
+	ProjectionImpl impl = ProjectionSpecification.getProjection("+proj=stere +lat_0=90 +lon_0=58 +lat_ts=60 +a=6371000 +units=m +no_defs");
+	LatLonPoint p = impl.projToLatLon(-2452.000, -1952.000);
 
-	assertEquals(-122, p.getLongitude(), e);
-	assertEquals(89.518058, p.getLatitude(), e);
-	
-//	assertEquals(-148.565051, p.getLongitude(), e);
-//	assertEquals(89.999784, p.getLatitude(), e); // ~ 89.785589
+	assertEquals(6.52276459393507, p.getLongitude(), e);
+	assertEquals(60.4627127507448, p.getLatitude(), e);
 }
+
+@Test
+public void testStereoGraphicProjection2() {
+	
+	ProjectionImpl impl = ProjectionSpecification.getProjection("+proj=stere +lat_0=90 +lon_0=58 +lat_ts=60 +a=6371000 +units=m +no_defs");
+	LatLonPoint p = impl.projToLatLon(-1704.000, -1504.000);
+
+	assertEquals(9.43256110381849, p.getLongitude(), e);
+	assertEquals(68.3538736322542, p.getLatitude(), e);
+}
+
+@Test
+public void testStereoGraphicProjection3() {
+	
+	// Units is not supported!
+	
+	ProjectionImpl impl = ProjectionSpecification.getProjection("+proj=stere +lat_0=90 +lon_0=58 +lat_ts=60 +a=6371000 +units=m +no_defs");
+	ProjectionPoint p = impl.latLonToProj(68.3538736322542, 9.43256110381849);
+
+	
+	for ( Parameter pm : impl.getProjectionParameters() )
+		System.out.println("\t" + pm);
+	
+	assertEquals(-1704.000, p.getX(), e);
+	assertEquals(-1504.000, p.getY(), e);
+}
+
+
 }
