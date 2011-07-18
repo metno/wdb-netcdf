@@ -97,9 +97,6 @@ class GridHandler implements DataHandler {
 	@Override
 	public void addToNetcdfFile(NetcdfFile out) {
 		
-		// TODO: correct names for rotated lat/lon grids
-		// TODO: add projection variable
-		
 		addProjectionVariable(out);
 		
 		if ( projection.getProjection().isLatLon() ) {
@@ -115,19 +112,23 @@ class GridHandler implements DataHandler {
 					new Attribute("axis", "y"));
 		}
 		else {
-			oneDimensionX = createDimensionVariable(out, "xc", grid.getNumberX(), 
+			String xc = projection.getSuggestedXDimensionName();
+			String yc = projection.getSuggestedYDimensionName();
+			String dims = yc + " " + xc;
+			
+			oneDimensionX = createDimensionVariable(out, xc, grid.getNumberX(), 
 					new Attribute("standard_name", "projection_x_coordinate"),
-					new Attribute("units", "m"),
+					new Attribute("units", projection.getUnitsX()),
 					new Attribute("axis", "x"));
-			oneDimensionY = createDimensionVariable(out, "yc", grid.getNumberY(), 
+			oneDimensionY = createDimensionVariable(out, yc, grid.getNumberY(), 
 					new Attribute("standard_name", "projection_y_coordinate"),
-					new Attribute("units", "m"),
+					new Attribute("units", projection.getUnitsY()),
 					new Attribute("axis", "y"));
-			twoDimensionX = createDerivedVariable(out, "longitude", "yc xc",
+			twoDimensionX = createDerivedVariable(out, "longitude", dims,
 					new Attribute("long_name", "longitude"),
 					new Attribute("standard_name", "longitude"),
 					new Attribute("units", "degree_east"));
-			twoDimensionY = createDerivedVariable(out, "latitude", "yc xc",
+			twoDimensionY = createDerivedVariable(out, "latitude", dims,
 					new Attribute("long_name", "latitude"),
 					new Attribute("standard_name", "latitude"),
 					new Attribute("units", "degree_north"));
