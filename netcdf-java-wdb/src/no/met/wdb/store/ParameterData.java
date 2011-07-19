@@ -48,8 +48,7 @@ class ParameterData {
 			if (s.getParameter().equals(d.getValueParameter())) {
 
 				int r = indexOf(d.getReferenceTime(), referenceTimes);
-				int t = indexOf(d.getValidTimeTo().getTime()
-						- d.getReferenceTime().getTime(), validTimes);
+				int t = indexOf((d.getValidTimeTo().getTime() - d.getReferenceTime().getTime()) / 1000, validTimes);
 				int l = indexOf(d.getLevelTo(), levels);
 				int v = indexOf(d.getDataVersion(), versions);
 

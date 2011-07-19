@@ -43,7 +43,7 @@ public class WdbIndex {
 			data.put(s.getKey(), new ParameterData(s.getValue(), gridData));
 
 		for ( GridData d : gridData ) {
-			allValidtimes.add(d.getValidTimeTo().getTime() - d.getReferenceTime().getTime());
+			allValidtimes.add((d.getValidTimeTo().getTime() - d.getReferenceTime().getTime()) / 1000);
 			allReferenceTimes.add(d.getReferenceTime());
 			parameterToUnit.put(d.getValueParameter().getName(), d.getValueParameter().getUnit());
 			TreeSet<Float> lvl = levels.get(d.getLevel().getName());

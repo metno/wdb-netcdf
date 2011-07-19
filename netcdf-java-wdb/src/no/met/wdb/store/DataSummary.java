@@ -20,8 +20,8 @@ class DataSummary {
 		parameter = gridData.getValueParameter();
 
 		referenceTimes.add(gridData.getReferenceTime());
-		validTimes.add(gridData.getValidTimeTo().getTime()
-				- gridData.getReferenceTime().getTime());
+		validTimes.add((gridData.getValidTimeTo().getTime()
+				- gridData.getReferenceTime().getTime()) / 1000);
 		if (level != null) {
 			if (!level.equals(gridData.getLevel())) {
 
