@@ -3,15 +3,71 @@
 WDB parsing module for netcdf-java.
 
 <p>
-This is an extension module for the netcdf-java library, which allows
-reading wdb databases in a similar manner that you would a regular
-netcdf file.
+This is an extension module for the 
+<a href="http://www.unidata.ucar.edu/software/netcdf-java/">netcdf-java</a> 
+library, which allows reading wdb databases in a similar manner that you would 
+a regular netcdf file.
+
+
 
 <h1>Usage</h1>
 
-In order to use this module with netcdf-java, you must register it in yout 
-program. More complete inteructions can be found at 
-{@link http://www.unidata.ucar.edu/software/netcdf-java/reference/RuntimeLoading.html}. 
+
+<h2>Registering wdb with netcdf-java</h2>
+
+In order to use this module with netcdf-java, you must register it in your 
+program. More complete instructions can be found at the
+<a href="http://www.unidata.ucar.edu/software/netcdf-java/reference/RuntimeLoading.html">
+netdf-java pages</a>, but a short summary is also provided here.
+
+<p>
+The simplest way to use wdb_netcdf, is to register it programatically 
+somewhere before using the netcdf-java library, for example in your main 
+method. This is done by performing the following static method call:
+
+<p>
+<code>
+ucar.nc2.NetcdfFile.registerIOProvider(no.met.wdb.netcdf.WdbIOServiceProvider.class);
+</code>   
+
+<p>
+It is also possible to specify this loading, using an xml file in a particular 
+format. This allows for using wdb with programs, such as ToolsUI. See the 
+netcdf-java documentation for details.
+
+
+<h2>Locating database and specifying dataset</h2>
+
+Since wdb is a database, there is no file to read to get the data. Instead, a 
+wdb configuration file is used. This file specifies where to find the 
+database. Optionally, the file may also specify restrictions on what data may 
+be extracted from the database. The restriction works by specifying a wci.read 
+query, and only those rows which are returned by that query becomes available 
+to netcdf-java. Only parameters to wci.read that are specified in the file 
+will be subject to restrictions.
+
+<p>
+The wdb configuration file should be in xml format. A schema for the xml can 
+be found in the etc/wdb_query.xsd file of the wdb_netcdf package. Also, an example 
+configuration file may be found in the test/ folder.
+
+
+<h2>Global configuration</h2>
+
+A global configuration file is provided in order to provide configuration 
+which should be valid for every database. Here, translations between wdb- and
+netcdf parameter names are provided. Also, a specification of what global 
+attributes to include in every netcdf file is also provided. This is an xml 
+file with a schema defined in etc/wdb_config.xsd. The default global 
+configuration file may also be found in the same folder.
+
+<p>
+Normal users should never need to worry about the global configuration file.
+ 
+
+
+  
+
 
 </body>
 </html>
