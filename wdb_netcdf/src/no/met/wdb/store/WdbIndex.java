@@ -10,6 +10,11 @@ import java.util.Vector;
 import no.met.wdb.GridData;
 import no.met.wdb.Level;
 
+/**
+ * Provides information about a wdb grid data set as a whole. This object may 
+ * be used to acquire information about such things as what levels are 
+ * available for a given parameter.   
+ */
 public class WdbIndex {
 	
 	private HashMap<String, ParameterData> data = new HashMap<String, ParameterData>();

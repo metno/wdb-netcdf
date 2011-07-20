@@ -1,6 +1,6 @@
 package no.met.wdb.store;
 
-public class WdbIndexTest {
+class WdbIndexTest {
 
 	/*
 	private Vector<GridData> gridData = new Vector<GridData>();
