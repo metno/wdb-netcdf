@@ -1,5 +1,9 @@
 package no.met.wdb;
 
+/**
+ * A specification of anything measurable, such as temperature, of height 
+ * above ground.
+ */
 public class Parameter implements Comparable<Parameter> {
 
 	private String name;

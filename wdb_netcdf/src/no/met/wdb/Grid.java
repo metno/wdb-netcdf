@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Holds a grid with data, along with a minimum of metadata information. This 
+ * object is not created directly, but through the 
+ * {@link no.met.wdb.WdbConnection#getGrid(long)} method. 
+ */
 public class Grid {
 
 	private float grid[];
@@ -44,11 +49,20 @@ public class Grid {
 			throw new SQLException(e);
 		}
 	}
-	
+
+	/**
+	 * Get the query that willl be used to produce a Grid object.
+	 * @param gridId Identifier for the grid we want.
+	 * @return An SQL formatted string for getting grid data from a wdb database. 
+	 */
 	public static String query(long gridId) {
 		return "SELECT grid, numberx::int, numbery::int, incrementx, incrementy, startx, starty, projdefinition FROM wci.fetch(" + gridId + ", NULL::wci.grid)";
 	}
 
+	/**
+	 * Access the grid.
+	 * @return The data in the grid
+	 */
 	public float[] getGrid() {
 		return grid;
 	}

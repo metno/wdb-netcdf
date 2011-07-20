@@ -6,6 +6,9 @@ import no.met.wdb.GridData;
 import no.met.wdb.Level;
 import no.met.wdb.Parameter;
 
+/**
+ * Creating fake GridData objects, without going through any database.
+ */
 public class TestingGridData extends GridData {
 
 	private static long gidCounter = 0;

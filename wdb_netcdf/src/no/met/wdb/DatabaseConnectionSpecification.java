@@ -37,7 +37,9 @@ import java.io.RandomAccessFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+/**
+ * A specification of how to connect to a wdb database.
+ */
 public class DatabaseConnectionSpecification {
 
 	private String database = null;
@@ -45,9 +47,20 @@ public class DatabaseConnectionSpecification {
 	private int port = PORT_NOT_SPECIFIED;
 	private String user = null;
 
+	/**
+	 * If the pprt has not been specified, it will get this value
+	 */
 	public static final int PORT_NOT_SPECIFIED = -1;
 	
 
+	/**
+	 * Initializing object with the given varaibles.
+	 * 
+	 * @param database name of database to connect to
+	 * @param host hostname where the database exists
+	 * @param port port number to use
+	 * @param user postgresql user name
+	 */
 	public DatabaseConnectionSpecification(String database, String host, int port, String user) {
 		this.database = database;
 		this.host = host;
@@ -56,10 +69,26 @@ public class DatabaseConnectionSpecification {
 	}
 
 	
+	/**
+	 * Reading a simple configuration file, with name=value pairs. The layout 
+	 * of the expected file is similar to that of the config files used by wdb itself.
+	 *  
+	 * @param configFile configuration is read from here.
+	 * @throws InvalidDatabaseConnectionSpecificationException if unable to parse the configuration properly
+	 * @throws IOException if accessing the given DataInput does.
+	 */
 	public DatabaseConnectionSpecification(File configFile)  throws InvalidDatabaseConnectionSpecificationException, IOException, FileNotFoundException {
 		this(new RandomAccessFile(configFile, "r"));
 	}
 
+	/**
+	 * Reading a simple configuration file, with name=value pairs. The layout 
+	 * of the expected file is similar to that of the config files used by wdb itself.
+	 *  
+	 * @param configurationFile configuration is read from here.
+	 * @throws InvalidDatabaseConnectionSpecificationException if unable to parse the configuration properly
+	 * @throws IOException if accessing the given DataInput does.
+	 */
 	public DatabaseConnectionSpecification(DataInput configurationFile) throws InvalidDatabaseConnectionSpecificationException, IOException {
 		
 		Pattern p = Pattern.compile("(database|host|port|user)\\s*=\\s*(.*)");

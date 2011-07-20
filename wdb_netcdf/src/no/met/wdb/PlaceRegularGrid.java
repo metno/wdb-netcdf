@@ -3,6 +3,9 @@ package no.met.wdb;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Grid definition for regular grids.
+ */
 public class PlaceRegularGrid {
 
 	private String placeGeometry;

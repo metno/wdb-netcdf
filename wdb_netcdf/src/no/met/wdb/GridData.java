@@ -6,6 +6,9 @@ import java.util.Date;
 
 /**
  * A single return row from wci.read(..., wci.returnGid);
+ * 
+ * This  * object is not created directly, but through the 
+ * {@link no.met.wdb.WdbConnection#readGid(ReadQuery)} method. 
  */
 public class GridData {
 
