@@ -52,7 +52,7 @@ import ucar.nc2.iosp.IOServiceProvider;
 import ucar.nc2.util.CancelTask;
 
 /**
- * IOServiceProvider for accessing a wdb database
+ * IOServiceProvider for accessing a wdb database.
  */
 public class WdbIOServiceProvider implements IOServiceProvider {
 

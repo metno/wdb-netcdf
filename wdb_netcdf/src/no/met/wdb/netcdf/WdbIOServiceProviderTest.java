@@ -9,7 +9,7 @@ import org.junit.Test;
 import ucar.nc2.iosp.IOServiceProvider;
 import ucar.unidata.io.RandomAccessFile;
 
-public class WdbIOServiceProviderTest {
+class WdbIOServiceProviderTest {
 
 	@Test
 	public void testIsValidFile() {

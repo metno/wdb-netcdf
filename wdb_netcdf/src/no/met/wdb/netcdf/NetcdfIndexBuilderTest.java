@@ -18,7 +18,7 @@ import ucar.nc2.Dimension;
 import ucar.nc2.Variable;
 
 
-public class NetcdfIndexBuilderTest {
+class NetcdfIndexBuilderTest {
 
 	private TestingNetcdfFile ncfile;
 	private NetcdfIndexBuilder indexBuilder;

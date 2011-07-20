@@ -22,7 +22,7 @@ import ucar.unidata.util.Parameter;
 //	+proj=ob_tran +o_proj=longlat +lon_0=0 +o_lat_p=25 +a=6367470.0 +no_defs
 //	+proj=ob_tran +o_proj=longlat +lon_0=-40 +o_lat_p=22 +a=6367470.0 +no_defs
 
-public class ProjectionFactoryTest {
+class ProjectionFactoryTest {
 
 	//private static final double e = 0.00001;
 	private static final double e = 0.005;

@@ -19,7 +19,7 @@ import org.jdom.input.SAXBuilder;
 import ucar.unidata.io.RandomAccessFile;
 
 
-public class WdbConfiguration {
+class WdbConfiguration {
 	
 	private DatabaseConnectionSpecification databaseConnectionSpecification;
 	String wciUser;

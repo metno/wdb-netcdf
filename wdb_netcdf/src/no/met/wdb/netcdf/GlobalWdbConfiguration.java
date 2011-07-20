@@ -12,7 +12,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-public class GlobalWdbConfiguration {
+class GlobalWdbConfiguration {
 
 	private HashMap<String, String> wdb2cf = new HashMap<String, String>();
 	private HashMap<String, String> cf2wdb = new HashMap<String, String>();
