@@ -1,9 +1,6 @@
 package no.met.wdb.netcdf;
 
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import no.met.wdb.GridData;
 import no.met.wdb.PlaceRegularGrid;
 import ucar.ma2.Array;
@@ -12,7 +9,6 @@ import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
-import ucar.unidata.geoloc.ProjectionImpl;
 import ucar.unidata.util.Parameter;
 import ucar.units.Unit;
 import ucar.units.UnitException;
