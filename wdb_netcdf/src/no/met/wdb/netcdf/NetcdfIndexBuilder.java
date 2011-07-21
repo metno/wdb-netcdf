@@ -70,6 +70,8 @@ class NetcdfIndexBuilder {
 			out.addAttribute(null, attr);
 		addDimensions(out);
 		addParameterVariables(out);
+		
+		out.finish();
 	}
 
 	public Array getMetadata(Variable v2, Section section) throws InvalidRangeException {

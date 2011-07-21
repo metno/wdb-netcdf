@@ -31,6 +31,31 @@ public class PlaceRegularGrid {
 		startY = queryResult.getFloat(++i);
 		projDefinition = queryResult.getString(++i);
 	}
+	
+	/**
+	 * For tests
+	 */
+	protected PlaceRegularGrid(
+		String placeGeometry,
+		String placeName,
+		int numberX,
+		int numberY,
+		float incrementX,
+		float incrementY,
+		float startX,
+		float startY,
+		String projDefinition) {
+
+		this.placeGeometry = placeGeometry;
+		this.placeName = placeName;
+		this.numberX = numberX;
+		this.numberY = numberY;
+		this.incrementX = incrementX;
+		this.incrementY = incrementY;
+		this.startX = startX;
+		this.startY = startY;
+		this.projDefinition = projDefinition;
+	}
 
 	public String getPlaceGeometry() {
 		return placeGeometry;

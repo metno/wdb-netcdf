@@ -12,7 +12,7 @@ import no.met.wdb.ReadQuery;
 import org.jdom.JDOMException;
 import org.junit.Test;
 
-class WdbConfigurationTest {
+public class WdbConfigurationTest {
 
 	@Test
 	public void testConnectionSpecification() throws IOException, JDOMException {

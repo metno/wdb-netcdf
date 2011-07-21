@@ -5,6 +5,7 @@ import java.util.Date;
 import no.met.wdb.GridData;
 import no.met.wdb.Level;
 import no.met.wdb.Parameter;
+import no.met.wdb.PlaceRegularGrid;
 
 /**
  * Creating fake GridData objects, without going through any database.
@@ -101,7 +102,7 @@ public class TestingGridData extends GridData {
 		@SuppressWarnings("deprecation")
 		Date d = new Date(2011,4,20,6,0,0);
 		
-		return new TestingGridData(
+		TestingGridData ret = new TestingGridData(
 				++ gidCounter,
 				defaultDataProvider,
 				defaultLocation,
@@ -123,6 +124,11 @@ public class TestingGridData extends GridData {
 				0,
 				0
 				);
+		
+		TestingPlaceRegularGrid grid = new TestingPlaceRegularGrid();
+		ret.setGrid(grid);
+		
+		return ret;
 	}
 	
 	

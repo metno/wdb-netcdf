@@ -18,7 +18,7 @@ import ucar.nc2.Dimension;
 import ucar.nc2.Variable;
 
 
-class NetcdfIndexBuilderTest {
+public class NetcdfIndexBuilderTest {
 
 	private TestingNetcdfFile ncfile;
 	private NetcdfIndexBuilder indexBuilder;
@@ -47,9 +47,8 @@ class NetcdfIndexBuilderTest {
 		
 		
 		assertTrue(dimensionNames.contains("time"));
-		// fix these later:
-		assertTrue(dimensionNames.contains("x"));
-		assertTrue(dimensionNames.contains("y"));
+		assertTrue(dimensionNames.contains("longitude"));
+		assertTrue(dimensionNames.contains("latitude"));
 	}
 
 	@Test

@@ -145,10 +145,6 @@ public class GridData {
 		return placeGeometry;
 	}
 
-	void setGrid(PlaceRegularGrid grid) {
-		this.grid = grid;
-	}
-	
 	public PlaceRegularGrid getGrid() {
 		return grid;
 	}
@@ -235,6 +231,11 @@ public class GridData {
 
 	protected void setPlaceGeometry(String placeGeometry) {
 		this.placeGeometry = placeGeometry;
+	}
+	
+
+	protected void setGrid(PlaceRegularGrid grid) {
+		this.grid = grid;
 	}
 
 

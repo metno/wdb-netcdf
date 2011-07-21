@@ -93,8 +93,6 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 				return;
 
 			index.populate(ncfile);
-			
-			ncfile.finish();
 		}
 		catch ( Exception e ) {
 			throw new IOException(e);
