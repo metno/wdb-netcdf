@@ -5,7 +5,6 @@ import java.util.Date;
 import no.met.wdb.GridData;
 import no.met.wdb.Level;
 import no.met.wdb.Parameter;
-import no.met.wdb.PlaceRegularGrid;
 
 /**
  * Creating fake GridData objects, without going through any database.
