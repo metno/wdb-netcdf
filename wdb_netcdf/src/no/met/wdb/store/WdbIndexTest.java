@@ -1,8 +1,21 @@
 package no.met.wdb.store;
 
-class WdbIndexTest {
+import static org.junit.Assert.*;
 
-	/*
+import java.util.Vector;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import ucar.ma2.InvalidRangeException;
+import ucar.ma2.Range;
+
+import no.met.wdb.GridData;
+import no.met.wdb.Level;
+import no.met.wdb.test.TestingGridData;
+
+public class WdbIndexTest {
+
 	private Vector<GridData> gridData = new Vector<GridData>();
 
 	
@@ -24,7 +37,17 @@ class WdbIndexTest {
 	
 	private long[] process(String valueParameter, int timeIndex) throws IndexCreationException  {
 		WdbIndex index = new WdbIndex(gridData);
-		return index.getData(valueParameter, timeIndex,1,0,1,0,1,0,1);
+		
+		try {
+			return index.getData(valueParameter, 
+					new Range(index.getAllReferenceTimes().size()), 
+					new Range(timeIndex, timeIndex), 
+					new Range(index.hasManyLevels(valueParameter) ? index.levelsForParameter(valueParameter).size() : 1), 
+					new Range(index.versionsForParameter(valueParameter).size()));
+		} catch (InvalidRangeException e) {
+			throw new RuntimeException(e); // should never happen
+		}
+		//public long[] getData(String parameter, ucar.ma2.Range referenceTime, ucar.ma2.Range validTime, ucar.ma2.Range level, ucar.ma2.Range version) {
 	}
 	
 	
@@ -37,12 +60,10 @@ class WdbIndexTest {
 	@Test
 	public void simpleCase() throws IndexCreationException  {
 		gridData.add(TestingGridData.get());
-		Iterator<Long> data = process().iterator();
+		long[] data = process();
 		
-		assertTrue(data != null);
-		assertTrue(data.hasNext());
-		assertEquals(1, data.next().longValue());
-		assertFalse(data.hasNext());
+		assertEquals(1, data.length);
+		assertEquals(1, data[0]);
 	}
 
 	
@@ -53,12 +74,10 @@ class WdbIndexTest {
 		gridData.add(TestingGridData.get(1));
 		gridData.add(TestingGridData.get(0));
 
-		Iterator<Long> data = process(0).iterator();
+		long[] data = process(0);
 
-		assertTrue(data != null);
-		assertTrue(data.hasNext());
-		assertEquals(3, data.next().longValue());
-		assertFalse(data.hasNext());
+		assertEquals(1, data.length);
+		assertEquals(3, data[0]);
 	}
 
 	
@@ -69,15 +88,13 @@ class WdbIndexTest {
 		gridData.add(TestingGridData.get(0));
 		gridData.add(TestingGridData.get(1));
 
-		Iterator<Long> data = process(1).iterator();
+		long[] data = process(1);
 
-		assertTrue(data != null);
-		assertTrue(data.hasNext());
-		assertEquals(3, data.next().longValue());
-		assertFalse(data.hasNext());
+		assertEquals(1, data.length);
+		assertEquals(3, data[0]);
 	}
 	
-	
+
 	@Test
 	public void throwOnSameData() throws IndexCreationException {
 		gridData.add(TestingGridData.get());
@@ -97,7 +114,7 @@ class WdbIndexTest {
 		gridData.add(TestingGridData.get());
 		try {
 			process(1);
-			fail("Expected InvalidRequestException exception");
+			fail("Expected IllegalArgumentException exception");
 		}
 		catch ( IllegalArgumentException success ) {
 		}
@@ -109,13 +126,13 @@ class WdbIndexTest {
 		gridData.add(TestingGridData.get("pressure", "pa"));
 		try {
 			process("temperature");
-			fail("Expected InvalidRequestException exception");
+			fail("Expected IllegalArgumentException exception");
 		}
 		catch ( IllegalArgumentException success ) {
 		}
 	}
 
-	
+
 	@Test
 	public void selectSingleParameter() throws IndexCreationException  {
 		gridData.add(TestingGridData.get("temperature", "C"));
@@ -123,20 +140,16 @@ class WdbIndexTest {
 		
 		WdbIndex index = new WdbIndex(gridData);
 		
-		Iterator<Long> data = index.getData("temperature", 0,1,0,1,0,1,0,1).iterator();
-		assertTrue(data != null);
-		assertTrue(data.hasNext());
-		assertEquals(1, data.next().longValue());
-		assertFalse(data.hasNext());
+		long[] data = index.getData("temperature", new Range(1), new Range(1), new Range(1), new Range(1));
+		assertEquals(1, data.length);
+		assertEquals(1, data[0]);
 
-		data = index.getData("pressure", 0,1,0,1,0,1,0,1).iterator();
-		assertTrue(data != null);
-		assertTrue(data.hasNext());
-		assertEquals(2, data.next().longValue());
-		assertFalse(data.hasNext());
+		data = index.getData("pressure", new Range(1), new Range(1), new Range(1), new Range(1));
+		assertEquals(1, data.length);
+		assertEquals(2, data[0]);
 	}
 
-	
+
 	@Test
 	public void selectParameterWithMissingTimeEntry() throws IndexCreationException {
 		gridData.add(TestingGridData.get(0, "air temperature", "C"));
@@ -146,11 +159,9 @@ class WdbIndexTest {
 		//gridData.add(TestingGridData.get(1, "air pressure", "pa"));
 		gridData.add(TestingGridData.get(2, "air pressure", "pa"));
 		
-		Iterator<Long> missing = process("air pressure", 1).iterator();
-		assertTrue(missing != null);
-		assertTrue(missing.hasNext());
-		assertEquals(null, missing.next());
-		assertFalse(missing.hasNext());
+		long[] missing = process("air pressure", 1);
+		assertEquals(1, missing.length);
+		assertEquals(WdbIndex.UNDEFINED_GID, missing[0]);
 	}
 
 	
@@ -160,51 +171,41 @@ class WdbIndexTest {
 		gridData.add(TestingGridData.get(1, "temperature", "c"));
 		gridData.add(TestingGridData.get(2, "temperature", "c"));
 		gridData.add(TestingGridData.get(1, "terrain height", "m"));
-		Iterator<Long> data = process("terrain height", 0).iterator();
-		assertTrue(data != null);
-		assertTrue(data.hasNext());
-		Long value = data.next();
-		assertFalse(value == null);
-		assertEquals(4, value.longValue());
-		assertFalse(data.hasNext());
+	
+		long[] data = process("terrain height", 0);
+		assertEquals(1, data.length);
+		assertEquals(4, data[0]);
 	}
 
-	
+
 	@Test
 	public void getLevels() throws IndexCreationException  {
 		Level lvl = new Level("lvl", "m");
 		gridData.add(TestingGridData.get(lvl, 0));
 		gridData.add(TestingGridData.get(lvl, 1));
 		gridData.add(TestingGridData.get(lvl, 2));
-		Iterator<Long> data = process().iterator();
-		
-		assertTrue(data != null);
-		assertTrue(data.hasNext());
-		assertEquals(1, data.next().longValue());
-		assertTrue(data.hasNext());
-		assertEquals(2, data.next().longValue());
-		assertTrue(data.hasNext());
-		assertEquals(3, data.next().longValue());
-		assertFalse(data.hasNext());
+		long[] data = process();
+
+		assertEquals(3, data.length);
+		assertEquals(1, data[0]);
+		assertEquals(2, data[1]);
+		assertEquals(3, data[2]);
 	}
 	
-	
+
 	@Test
 	public void twoLevelsComingInWrongOrder() throws IndexCreationException  {
 		Level lvl = new Level("lvl", "m");
 		gridData.add(TestingGridData.get(lvl, 1));
 		gridData.add(TestingGridData.get(lvl, 0));
-		Iterator<Long> data = process().iterator();
-		
-		assertTrue(data != null);
-		assertTrue(data.hasNext());
-		assertEquals(2, data.next().longValue());
-		assertTrue(data.hasNext());
-		assertEquals(1, data.next().longValue());
-		assertFalse(data.hasNext());
+		long[] data = process();
+	
+		assertEquals(2, data.length);
+		assertEquals(2, data[0]);
+		assertEquals(1, data[1]);
 	}
 
-	
+
 	@Test
 	public void getMissingLevels() throws IndexCreationException {
 		Level lvl = new Level("height", "m");
@@ -214,19 +215,15 @@ class WdbIndexTest {
 		gridData.add(TestingGridData.get(1, lvl, 0));
 		gridData.add(TestingGridData.get(1, lvl, 1));
 		gridData.add(TestingGridData.get(1, lvl, 2));
-		Iterator<Long> data = process(0).iterator();
+		long[] data = process(0);
 
-		assertTrue(data != null);
-		assertTrue(data.hasNext());
-		assertEquals(1, data.next().longValue());
-		assertTrue(data.hasNext());
-		assertEquals(null, data.next());
-		assertTrue(data.hasNext());
-		assertEquals(2, data.next().longValue());
-		assertFalse(data.hasNext());
+		assertEquals(3, data.length);
+		assertEquals(1, data[0]);
+		assertEquals(WdbIndex.UNDEFINED_GID, data[1]);
+		assertEquals(2, data[2]);
 	}
 	
-	
+
 	@Test
 	public void getMissingLevelsForMissingTimes() throws IndexCreationException {
 		gridData.add(TestingGridData.get(1, "pressure", "pa"));
@@ -241,19 +238,15 @@ class WdbIndexTest {
 		gridData.add(TestingGridData.get(2, lvl, 1));
 		gridData.add(TestingGridData.get(2, lvl, 2));
 		
-		Iterator<Long> data = process(0).iterator();
+		long[] data = process(0);
 
-		assertTrue(data != null);
-		assertTrue(data.hasNext());
-		assertEquals(null, data.next());
-		assertTrue(data.hasNext());
-		assertEquals(null, data.next());
-		assertTrue(data.hasNext());
-		assertEquals(null, data.next());
-		assertFalse(data.hasNext());
+		assertEquals(3, data.length);
+		assertEquals(WdbIndex.UNDEFINED_GID, data[0]);
+		assertEquals(WdbIndex.UNDEFINED_GID, data[1]);
+		assertEquals(WdbIndex.UNDEFINED_GID, data[2]);
 	}
 
-	
+
 	@Test
 	public void separatesSeveralTypesOfLevels() throws IndexCreationException {
 		Level lvlA = new Level("height", "m");
@@ -262,14 +255,12 @@ class WdbIndexTest {
 		gridData.add(TestingGridData.get("temperature", "C", lvlB, 1));
 		gridData.add(TestingGridData.get("temperature", "C", lvlB, 0));
 		
-		Iterator<Long> data = process("pressure").iterator();
-		assertTrue(data != null);
-		assertTrue(data.hasNext());
-		assertEquals(1, data.next().longValue());
-		assertFalse(data.hasNext());
+		long[] data = process("pressure");
+		assertEquals(1, data.length);
+		assertEquals(1, data[0]);
 	}
 
-	
+
 	@Test
 	public void throwOnManyLevelTypesForSameParameterInData() throws IndexCreationException {
 		gridData.add(TestingGridData.get(new Level("level a", "m"), 1));
@@ -282,7 +273,7 @@ class WdbIndexTest {
 		}
 	}	
 
-	
+
 	@Test
 	public void onlyOneLevelWhenAllEntriesHaveOneLevel() throws IndexCreationException {
 		Level lvl = new Level("height", "m");
@@ -291,13 +282,10 @@ class WdbIndexTest {
 		gridData.add(TestingGridData.get("temperature", "c", lvl, 10));
 		gridData.add(TestingGridData.get("wind speed", "m/s", lvl, 10));
 		
-		Iterator<Long> data = process("wind speed").iterator();
+		long[] data = process("wind speed");
 
-		assertTrue(data != null);
-		assertTrue(data.hasNext());
-		assertEquals(4, data.next().longValue());
-		assertFalse(data.hasNext());
-
+		assertEquals(1, data.length);
+		assertEquals(4, data[0]);
 	}
 	
 	
@@ -314,11 +302,9 @@ class WdbIndexTest {
 		gridData.add(TestingGridData.get(1, "wind speed", "m/s", lvl, 10));
 		gridData.add(TestingGridData.get(2, "wind speed", "m/s", lvl, 10));
 		
-		Iterator<Long> data = process("wind speed", 0).iterator();
-		assertTrue(data != null);
-		assertTrue(data.hasNext());
-		assertEquals(null, data.next());
-		assertFalse(data.hasNext());
+		long[] data = process("wind speed", 0);
+		assertEquals(1, data.length);
+		assertEquals(WdbIndex.UNDEFINED_GID, data[0]);
 	}
 
 
@@ -326,35 +312,28 @@ class WdbIndexTest {
 	public void multipleVersions() throws IndexCreationException {
 		gridData.add(TestingGridData.get(0, 0));
 		gridData.add(TestingGridData.get(0, 1));
-		Iterator<Long> data = process().iterator();
-		
-		assertTrue(data != null);
-		assertTrue(data.hasNext());
-		assertEquals(1, data.next().longValue());
-		assertTrue(data.hasNext());
-		assertEquals(2, data.next().longValue());
-		assertFalse(data.hasNext());
-		
+		long[] data = process();
+	
+		assertEquals(2, data.length);
+		assertEquals(1, data[0]);
+		assertEquals(2, data[1]);
 	}
 
-	
+
 	@Test
 	public void missingVersions() throws IndexCreationException {
 		gridData.add(TestingGridData.get(0, 0));
 		gridData.add(TestingGridData.get(0, 1));
 		gridData.add(TestingGridData.get(1, 0));
 		
-		Iterator<Long> data = process(1).iterator();
+		long[] data = process(1);
 
-		assertTrue(data != null);
-		assertTrue(data.hasNext());
-		assertEquals(3, data.next().longValue());
-		assertTrue(data.hasNext());
-		assertEquals(null, data.next());
-		assertFalse(data.hasNext());
+		assertEquals(2, data.length);
+		assertEquals(3, data[0]);
+		assertEquals(WdbIndex.UNDEFINED_GID, data[1]);
 	}
 	
-	
+
 	@Test
 	public void missingTimeStepWithManyVersions() throws IndexCreationException {
 		gridData.add(TestingGridData.get(0, 0, "temperature", "C"));
@@ -364,13 +343,10 @@ class WdbIndexTest {
 		gridData.add(TestingGridData.get(0, 1, "pressure", "pa"));
 		gridData.add(TestingGridData.get(1, 0, "pressure", "pa"));
 		
-		Iterator<Long> data = process("pressure", 2).iterator();
-		assertTrue(data != null);
-		assertTrue(data.hasNext());
-		assertEquals(null, data.next());
-		assertTrue(data.hasNext());
-		assertEquals(null, data.next());
-		assertFalse(data.hasNext());
+		long[] data = process("pressure", 2);
+		
+		assertEquals(2, data.length);
+		assertEquals(WdbIndex.UNDEFINED_GID, data[0]);
+		assertEquals(WdbIndex.UNDEFINED_GID, data[1]);
 	}
-*/
 }

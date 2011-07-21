@@ -24,7 +24,7 @@ public class WdbIndex {
 	HashMap<String, String> parameterToUnit = new HashMap<String, String>();
 
 	
-	public WdbIndex(Iterable<GridData> gridData) throws IndexCreationException {
+	public WdbIndex(Iterable<GridData> gridData) throws DuplicateDataException, IndexCreationException {
 		
 		HashMap<String, DataSummary> dataSummary = new HashMap<String, DataSummary>();
 
@@ -70,15 +70,24 @@ public class WdbIndex {
 		int size = referenceTime.length() * validTime.length() * level.length() * version.length();
 		long[] ret = new long[size];
 
-		long[][][][] d = data.get(parameter).getData();
+		
+		ParameterData parameterData = data.get(parameter);
+		if ( parameterData == null )
+			throw new IllegalArgumentException(parameter + ": no such parameter");
+		long[][][][] d = parameterData.getData();
 
 		int idx = 0;
 		
-		for (int r = referenceTime.first(); r <= referenceTime.last(); r += referenceTime.stride())
-			for (int t = validTime.first(); t <= validTime.last(); t += validTime.stride())
-				for (int l = level.first(); l <= level.last(); l += level.stride())
-					for ( int v = version.first(); v <= version.last(); v += version.stride() )
-						ret[idx ++] = d[r][t][l][v];
+		try {
+			for (int r = referenceTime.first(); r <= referenceTime.last(); r += referenceTime.stride())
+				for (int t = validTime.first(); t <= validTime.last(); t += validTime.stride())
+					for (int l = level.first(); l <= level.last(); l += level.stride())
+						for ( int v = version.first(); v <= version.last(); v += version.stride() )
+								ret[idx ++] = d[r][t][l][v];
+		}
+		catch ( ArrayIndexOutOfBoundsException e ) {
+			throw new IllegalArgumentException(e);
+		}
 		
 		return ret;
 	}
@@ -177,6 +186,9 @@ public class WdbIndex {
 	}
 
 	private ParameterData parameterData(String parameter) {
-		return data.get(parameter);
+		ParameterData ret = data.get(parameter);
+		if ( ret == null )
+			throw new IllegalArgumentException(parameter + ": no such parameter");
+		return ret;
 	}
 }

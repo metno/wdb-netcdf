@@ -16,7 +16,7 @@ class DataSummary {
 	TreeSet<Float> levelValues = new TreeSet<Float>();
 	TreeSet<Integer> versions = new TreeSet<Integer>();
 
-	public void add(GridData gridData) throws IndexCreationException {
+	public void add(GridData gridData) throws DuplicateDataException {
 		parameter = gridData.getValueParameter();
 
 		referenceTimes.add(gridData.getReferenceTime());
@@ -29,7 +29,7 @@ class DataSummary {
 						+ gridData.getValueParameter().toString() + "\t"
 						+ level.toString() + " and "
 						+ gridData.getLevel().toString();
-				throw new IndexCreationException(msg);
+				throw new DuplicateDataException(msg);
 			}
 		} else
 			level = gridData.getLevel();
