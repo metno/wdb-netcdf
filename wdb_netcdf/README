@@ -1,1 +1,9 @@
+WDB parsing module for netcdf-java.
+
+This is an extension module for the netcdf-java library, which allows reading 
+wdb databases in a similar manner that you would a regular netcdf file.
+
 See the overview.html file for information about usage of this library
+
+See http://www.unidata.ucar.edu/software/netcdf-java/ for information about 
+netcdf-java.
