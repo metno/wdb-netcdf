@@ -24,7 +24,7 @@ public class NetcdfIndexBuilderTest {
 	private NetcdfIndexBuilder indexBuilder;
 	private Vector<GridData> gridData = new Vector<GridData>();
 
-	private Wdb2NetcdfNameTranslator translator = new Wdb2NetcdfNameTranslator();
+	private GlobalWdbConfiguration translator = new GlobalWdbConfiguration();
 	
 	@Before
 	public void setUp() throws Exception {
@@ -62,7 +62,7 @@ public class NetcdfIndexBuilderTest {
 		assertEquals(1, timeDimensions.size());
 		assertEquals("time", timeDimensions.get(0).getName());
 		
-		Variable param = ncfile.findTopVariable(translator.fromWdb(TestingGridData.defaultValueParameter));
+		Variable param = ncfile.findTopVariable(translator.cfName(TestingGridData.defaultValueParameter));
 		assertTrue(param != null);
 		List<Dimension> paramDimensions = param.getDimensions();
 		assertEquals(2, paramDimensions.size());
@@ -76,7 +76,7 @@ public class NetcdfIndexBuilderTest {
 		gridData.add(TestingGridData.get(lvl, 1));
 		indexBuilder.populate(gridData, ncfile);
 
-		String cdlLevel = translator.fromWdb("lvl");
+		String cdlLevel = translator.cfName("lvl");
 		
 		List<Dimension> dims = ncfile.getDimensions();
 		Dimension lvlDimension = null;
@@ -95,7 +95,7 @@ public class NetcdfIndexBuilderTest {
 		assertEquals(1, lvlDimensions.size());
 		assertEquals(cdlLevel, lvlDimensions.get(0).getName());
 		
-		Variable param = ncfile.findTopVariable(translator.fromWdb(TestingGridData.defaultValueParameter));
+		Variable param = ncfile.findTopVariable(translator.cfName(TestingGridData.defaultValueParameter));
 		assertFalse(param == null);
 		List<Dimension> paramDimensions = param.getDimensions();
 		assertEquals(3, paramDimensions.size());
@@ -109,17 +109,17 @@ public class NetcdfIndexBuilderTest {
 		gridData.add(TestingGridData.get("precipitation", "mm"));
 		indexBuilder.populate(gridData, ncfile);
 
-		Variable param = ncfile.findTopVariable(translator.fromWdb("air temperature"));
+		Variable param = ncfile.findTopVariable(translator.cfName("air temperature"));
 		assertTrue(param != null);
 		List<Dimension> paramDimensions = param.getDimensions();
 		assertEquals(2, paramDimensions.size());
 
-		param = ncfile.findTopVariable(translator.fromWdb("air pressure"));
+		param = ncfile.findTopVariable(translator.cfName("air pressure"));
 		assertTrue(param != null);
 		paramDimensions = param.getDimensions();
 		assertEquals(2, paramDimensions.size());
 
-		param = ncfile.findTopVariable(translator.fromWdb("precipitation"));
+		param = ncfile.findTopVariable(translator.cfName("precipitation"));
 		assertTrue(param != null);
 		paramDimensions = param.getDimensions();
 		assertEquals(2, paramDimensions.size());
@@ -132,7 +132,7 @@ public class NetcdfIndexBuilderTest {
 		gridData.add(TestingGridData.get(1));
 		indexBuilder.populate(gridData, ncfile);
 
-		Variable param = ncfile.findTopVariable(translator.fromWdb(TestingGridData.defaultValueParameter));
+		Variable param = ncfile.findTopVariable(translator.cfName(TestingGridData.defaultValueParameter));
 		assertTrue(param != null);
 		List<Dimension> paramDimensions = param.getDimensions();
 		assertEquals(3, paramDimensions.size());
@@ -149,13 +149,13 @@ public class NetcdfIndexBuilderTest {
 		gridData.add(TestingGridData.get(2, "air pressure", "pa"));
 		indexBuilder.populate(gridData, ncfile);
 		
-		Variable param = ncfile.findTopVariable(translator.fromWdb("air temperature"));
+		Variable param = ncfile.findTopVariable(translator.cfName("air temperature"));
 		assertTrue(param != null);
 		List<Dimension> paramDimensions = param.getDimensions();
 		assertEquals(3, paramDimensions.size());
 		assertEquals("time", paramDimensions.get(0).getName());
 
-		param = ncfile.findTopVariable(translator.fromWdb("air pressure"));
+		param = ncfile.findTopVariable(translator.cfName("air pressure"));
 		assertTrue(param != null);
 		paramDimensions = param.getDimensions();
 		assertEquals(3, paramDimensions.size());

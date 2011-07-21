@@ -90,7 +90,8 @@ class WdbConfiguration {
 		
 		List<String> ret = null;
 		
-		List<Element> children = parent.getChildren(name);
+		@SuppressWarnings("unchecked")
+		List<Element> children = (List<Element>) parent.getChildren(name);
 		if ( ! children.isEmpty() ) {
 			ret = new Vector<String>(children.size());
 			for (Element e : children ) 
@@ -103,7 +104,8 @@ class WdbConfiguration {
 		
 		List<Integer> ret = null;
 		
-		List<Element> children = parent.getChildren(name);
+		@SuppressWarnings("unchecked")
+		List<Element> children = (List<Element>) parent.getChildren(name);
 		if ( ! children.isEmpty() ) {
 			ret = new Vector<Integer>(children.size());
 			for (Element e : children ) 

@@ -19,11 +19,14 @@ class GlobalWdbConfiguration {
 	private HashMap<String, Vector<ucar.nc2.Attribute>> attributes = new HashMap<String, Vector<ucar.nc2.Attribute>>();
 	private List<ucar.nc2.Attribute> globalAttributes; 
 	
-
+	GlobalWdbConfiguration() {
+	}
+	
 	public GlobalWdbConfiguration(String configFile) throws FileNotFoundException, IOException, JDOMException {
 		this(new File(configFile));
 	}
 	
+	@SuppressWarnings("unchecked")
 	public GlobalWdbConfiguration(File configFile) throws FileNotFoundException, IOException, JDOMException {
 		SAXBuilder builder = new SAXBuilder();
 		Document document = builder.build(configFile);
@@ -61,7 +64,8 @@ class GlobalWdbConfiguration {
 		Vector<ucar.nc2.Attribute> ret = new Vector<ucar.nc2.Attribute>();
 		
 		if ( parent != null ) {
-			List<Element> attributes = parent.getChildren("attribute");
+			@SuppressWarnings("unchecked")
+			List<Element> attributes = (List<Element>) parent.getChildren("attribute");
 			for ( Element e : attributes ) {
 				String name = e.getAttribute("name").getValue();
 				String value = e.getAttribute("value").getValue();
@@ -114,6 +118,7 @@ class GlobalWdbConfiguration {
 	 * have. The returned list is not meant to be exhaustive - other
 	 * attributes may be added by other means.
 	 */
+	@SuppressWarnings("unchecked")
 	public List<ucar.nc2.Attribute> getAttributes(String wdbParameter, String defaultUnit) {
 		
 		Vector<ucar.nc2.Attribute> ret;
