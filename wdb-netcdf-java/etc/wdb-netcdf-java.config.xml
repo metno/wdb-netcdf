@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Runtime configuration file for netcdf-java, loading wdb parsing into the library -->
+
+<runtimeConfig>
+	<ioServiceProvider class="no.met.wdb.netcdf.WdbIOServiceProvider"/>
+</runtimeConfig>
