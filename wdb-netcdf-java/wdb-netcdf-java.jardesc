@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="wdb-netcdf-java.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/wdb-netcdf-java/wdb-netcdf-java.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="/wdb-netcdf-java/wdb-netcdf-java.manifest" manifestVersion="1.0" reuseManifest="false" saveManifest="true" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{UcarRandomAccessFileInputStream.java"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{WdbConfiguration.java"/>
+        <file path="/wdb-netcdf-java/src/no/met/wdb/store/package.html"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{TestingNetcdfFile.java"/>
+        <file path="/wdb-netcdf-java/README"/>
+        <file path="/wdb-netcdf-java/COPYING"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.store{IndexCreationException.java"/>
+        <file path="/wdb-netcdf-java/src/no/met/wdb/netcdf/package.html"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{ProjectionSpecification.java"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{GlobalWdbConfiguration.java"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.store{DataSummary.java"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.store{InvalidRequestException.java"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{ValidTimeHandler.java"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.store{DuplicateDataException.java"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{NetcdfIndexBuilder.java"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{WdbIOServiceProvider.java"/>
+        <file path="/wdb-netcdf-java/overview.html"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{LevelHandler.java"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.store{ParameterData.java"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{TimeOffsetHandler.java"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{DataHandler.java"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.store{WdbIndex.java"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{ReferenceTimeHandler.java"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{VersionHandler.java"/>
+        <folder path="/wdb-netcdf-java/etc"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{GridHandler.java"/>
+    </selectedElements>
+</jardesc>
