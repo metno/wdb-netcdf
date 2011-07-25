@@ -29,6 +29,7 @@
 package no.met.wdb.netcdf;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.channels.WritableByteChannel;
 import java.sql.SQLException;
 import org.jdom.JDOMException;
@@ -59,6 +60,24 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 	private WdbConnection connection = null;
 	private NetcdfIndexBuilder index = null; 
 	
+
+	/**
+	 * Register this class as a netcdf-java IOServiceProvider
+	 * 
+	 * @throws IOException if unable to find or parse internal configuration
+	 */
+	public static void register() throws IOException {
+
+		//ucar.nc2.NetcdfFile.registerIOProvider(WdbIOServiceProvider.class);
+
+		InputStream is = WdbIOServiceProvider.class.getClassLoader().getResourceAsStream("wdb-netcdf-java.config.xml");
+		StringBuilder errlog = new StringBuilder();
+		ucar.nc2.util.xml.RuntimeConfigParser.read(is, errlog);
+		
+		if ( errlog.length() > 0 )
+			throw new IOException(errlog.toString());
+	}
+	
 	@Override
 	public boolean isValidFile(ucar.unidata.io.RandomAccessFile raf)
 			throws IOException {
@@ -71,7 +90,7 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 		return true;
 	}
 
-	
+	static String resourcePath = "wdb_config.xml";
 	
 	@Override
 	public void open(ucar.unidata.io.RandomAccessFile raf, NetcdfFile ncfile,
@@ -86,8 +105,10 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 				return;
 
 			Iterable<GridData> gridData = connection.readGid(configuration.getReadQuery());
-			
-			index = new NetcdfIndexBuilder(gridData, new GlobalWdbConfiguration("etc/wdb_config.xml"));
+
+			ClassLoader classLoader = this.getClass().getClassLoader();
+			GlobalWdbConfiguration globalConfig = new GlobalWdbConfiguration(classLoader.getResourceAsStream(resourcePath));
+			index = new NetcdfIndexBuilder(gridData, globalConfig);
 
 			if ( cancelTask != null && cancelTask.isCancel() )
 				return;

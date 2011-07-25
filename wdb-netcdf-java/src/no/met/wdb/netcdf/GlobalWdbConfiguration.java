@@ -1,8 +1,10 @@
 package no.met.wdb.netcdf;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -26,10 +28,14 @@ class GlobalWdbConfiguration {
 		this(new File(configFile));
 	}
 	
-	@SuppressWarnings("unchecked")
 	public GlobalWdbConfiguration(File configFile) throws FileNotFoundException, IOException, JDOMException {
+		this(new FileInputStream(configFile));
+	}
+
+	@SuppressWarnings("unchecked")
+	public GlobalWdbConfiguration(InputStream configStream) throws IOException, JDOMException {
 		SAXBuilder builder = new SAXBuilder();
-		Document document = builder.build(configFile);
+		Document document = builder.build(configStream);
 		
 		Element wdb_netcdf_config = document.getRootElement();
 		
@@ -44,6 +50,7 @@ class GlobalWdbConfiguration {
 				addParameterConfiguration(e);
 		}
 	}
+
 	
 	private void addParameterConfiguration(Element e) {
 		String wdbName = e.getAttributeValue("wdbname");

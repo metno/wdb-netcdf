@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
     <jar path="wdb-netcdf-java.jar"/>
-    <options buildIfNeeded="true" compress="true" descriptionLocation="/wdb-netcdf-java/wdb-netcdf-java.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/wdb-netcdf-java/wdb-netcdf-java.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
     <manifest generateManifest="true" manifestLocation="/wdb-netcdf-java/wdb-netcdf-java.manifest" manifestVersion="1.0" reuseManifest="false" saveManifest="true" usesManifest="true">
@@ -36,7 +36,7 @@
         <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{ReferenceTimeHandler.java"/>
         <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb"/>
         <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{VersionHandler.java"/>
-        <folder path="/wdb-netcdf-java/etc"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/etc"/>
         <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{GridHandler.java"/>
     </selectedElements>
 </jardesc>
