@@ -49,13 +49,14 @@ import ucar.nc2.NetcdfFile;
 import ucar.nc2.ParsedSectionSpec;
 import ucar.nc2.Structure;
 import ucar.nc2.Variable;
+import ucar.nc2.iosp.AbstractIOServiceProvider;
 import ucar.nc2.iosp.IOServiceProvider;
 import ucar.nc2.util.CancelTask;
 
 /**
  * IOServiceProvider for accessing a wdb database.
  */
-public class WdbIOServiceProvider implements IOServiceProvider {
+public class WdbIOServiceProvider extends AbstractIOServiceProvider { // implements IOServiceProvider {
 
 	private WdbConnection connection = null;
 	private NetcdfIndexBuilder index = null; 
@@ -118,6 +119,9 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 		catch ( Exception e ) {
 			throw new IOException(e);
 		}
+		finally {
+			raf.close();
+		}
 	}
 
 	@Override
@@ -167,65 +171,11 @@ public class WdbIOServiceProvider implements IOServiceProvider {
 		return ret;
 	}
 
-	
-	@Override
-	public long readToByteChannel(Variable v2, Section section,
-			WritableByteChannel channel) throws java.io.IOException,
-			InvalidRangeException {
-
-		//System.out.println("public long readToByteChannel(Variable v2, Section section,	WritableByteChannel channel)");
-		
-		throw new InvalidRangeException();
-	}
-
-
-	@Override
-	public Array readSection(ParsedSectionSpec cer) throws IOException,
-			InvalidRangeException {
-		
-		//System.out.println("public Array readSection(ParsedSectionSpec cer)");
-		
-		return null;
-	}
-
-	@Override
-	public StructureDataIterator getStructureIterator(Structure s,
-			int bufferSize) throws java.io.IOException {
-		
-		//System.out.println("public StructureDataIterator getStructureIterator(Structure s, int bufferSize)");
-		
-		return null;
-	}
 
 	@Override
 	public void close() throws IOException {
 		if ( connection != null )
 			connection.close();
-	}
-
-	@Override
-	public boolean syncExtend() throws IOException {
-		return false;
-	}
-
-	@Override
-	public boolean sync() throws IOException {
-		return false;
-	}
-
-	@Override
-	public Object sendIospMessage(Object message) {
-		return null;
-	}
-
-	@Override
-	public String toStringDebug(Object o) {
-		return "wdb iosp";
-	}
-
-	@Override
-	public String getDetailInfo() {
-		return "wdb iosp";
 	}
 
 	@Override
