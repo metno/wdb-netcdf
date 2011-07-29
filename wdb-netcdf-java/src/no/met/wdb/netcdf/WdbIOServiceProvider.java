@@ -30,7 +30,6 @@ package no.met.wdb.netcdf;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.channels.WritableByteChannel;
 import java.sql.SQLException;
 import org.jdom.JDOMException;
 
@@ -44,13 +43,9 @@ import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
 import ucar.ma2.Range;
 import ucar.ma2.Section;
-import ucar.ma2.StructureDataIterator;
 import ucar.nc2.NetcdfFile;
-import ucar.nc2.ParsedSectionSpec;
-import ucar.nc2.Structure;
 import ucar.nc2.Variable;
 import ucar.nc2.iosp.AbstractIOServiceProvider;
-import ucar.nc2.iosp.IOServiceProvider;
 import ucar.nc2.util.CancelTask;
 
 /**
