@@ -31,12 +31,13 @@ class ValidTimeHandler implements DataHandler {
 		TreeSet<Date> referenceTimes = index.getAllReferenceTimes();
 		TreeSet<Long> validTimes = index.getAllValidtimes();
 
-		String timeShape;
+		String timeShape = "";
 		if ( referenceTimes.size() > 1 )
 			timeShape = TimeOffsetHandler.cfName + " " + ReferenceTimeHandler.cfName;
 		else {
-			timeShape = cfName;
-
+			int validTimeCount = validTimes.size();
+			if ( validTimeCount > 1 )
+				timeShape = cfName;
 			Dimension time = new Dimension(cfName, validTimes.size());
 			time.setUnlimited(true);
 			out.addDimension(null, time);
@@ -57,22 +58,25 @@ class ValidTimeHandler implements DataHandler {
 			TreeSet<Date> referenceTimes = index.getAllReferenceTimes();
 			TreeSet<Long> validTimes = index.getAllValidtimes();
 			
-			if ( referenceTimes.size() > 1 && validTimes.size() < 1 ) {
-				int[] shape = new int[2];
-				shape[0] = referenceTimes.size();
-				shape[1] = validTimes.size();
-				data = Array.factory(DataType.DOUBLE, shape);
-			}
-			else if ( referenceTimes.size() > 1 ) {
-				int[] shape = new int[1];
-				shape[0] = referenceTimes.size();
-				data = Array.factory(DataType.DOUBLE, shape);				
-			}
-			else {
-				int[] shape = new int[1];
-				shape[0] = validTimes.size();
-				data = Array.factory(DataType.DOUBLE, shape);
-			}
+			
+			data = Array.factory(variable.getDataType(), variable.getShape());
+			
+//			if ( referenceTimes.size() > 1 && validTimes.size() < 1 ) {
+//				int[] shape = new int[2];
+//				shape[0] = referenceTimes.size();
+//				shape[1] = validTimes.size();
+//				data = Array.factory(DataType.DOUBLE, shape);
+//			}
+//			else if ( referenceTimes.size() > 1 ) {
+//				int[] shape = new int[1];
+//				shape[0] = referenceTimes.size();
+//				data = Array.factory(DataType.DOUBLE, shape);				
+//			}
+//			else {
+//				int[] shape = new int[1];
+//				shape[0] = validTimes.size();
+//				data = Array.factory(DataType.DOUBLE, shape);
+//			}
 			
 			int i = 0;
 			for ( Date d : referenceTimes )

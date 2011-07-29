@@ -88,6 +88,14 @@ public class WdbIOServiceProvider extends AbstractIOServiceProvider { // impleme
 
 	static String resourcePath = "wdb_config.xml";
 	
+	private GlobalWdbConfiguration getGlobalWdbConfiguration() throws IOException, JDOMException {
+
+		ClassLoader classLoader = this.getClass().getClassLoader();
+		InputStream globalConfigStream = classLoader.getResourceAsStream(resourcePath);
+		
+		return new GlobalWdbConfiguration(globalConfigStream);
+	}
+	
 	@Override
 	public void open(ucar.unidata.io.RandomAccessFile raf, NetcdfFile ncfile,
 			CancelTask cancelTask) throws IOException {
@@ -102,9 +110,7 @@ public class WdbIOServiceProvider extends AbstractIOServiceProvider { // impleme
 
 			Iterable<GridData> gridData = connection.readGid(configuration.getReadQuery());
 
-			ClassLoader classLoader = this.getClass().getClassLoader();
-			GlobalWdbConfiguration globalConfig = new GlobalWdbConfiguration(classLoader.getResourceAsStream(resourcePath));
-			index = new NetcdfIndexBuilder(gridData, globalConfig);
+			index = new NetcdfIndexBuilder(gridData, getGlobalWdbConfiguration());
 
 			if ( cancelTask != null && cancelTask.isCancel() )
 				return;

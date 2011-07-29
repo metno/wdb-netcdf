@@ -21,9 +21,10 @@ class GlobalWdbConfiguration {
 	private HashMap<String, String> wdb2cf = new HashMap<String, String>();
 	private HashMap<String, String> cf2wdb = new HashMap<String, String>();
 	private HashMap<String, Vector<ucar.nc2.Attribute>> attributes = new HashMap<String, Vector<ucar.nc2.Attribute>>();
-	private List<ucar.nc2.Attribute> globalAttributes; 
+	private List<ucar.nc2.Attribute> globalAttributes;
 	
 	GlobalWdbConfiguration() {
+		globalAttributes = new Vector<ucar.nc2.Attribute>();
 	}
 	
 	public GlobalWdbConfiguration(String configFile) throws FileNotFoundException, IOException, JDOMException {
@@ -81,10 +82,11 @@ class GlobalWdbConfiguration {
 			@SuppressWarnings("unchecked")
 			List<Element> attributes = (List<Element>) parent.getChildren("attribute");
 			for ( Element e : attributes ) {
+
 				String name = e.getAttribute("name").getValue();
-				String type = e.getAttribute("type").getValue();
-				if ( type.isEmpty() )
-					type = "String";
+				
+				org.jdom.Attribute typeAttribute = e.getAttribute("type");
+				String type = typeAttribute == null ? "String" : typeAttribute.getValue();
 				
 				org.jdom.Attribute value = e.getAttribute("value");
 				if ( type.equals("String") )
