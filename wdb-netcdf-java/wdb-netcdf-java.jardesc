@@ -18,9 +18,9 @@
         <file path="/wdb-netcdf-java/README"/>
         <file path="/wdb-netcdf-java/COPYING"/>
         <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.store{IndexCreationException.java"/>
-        <file path="/wdb-netcdf-java/src/no/met/wdb/netcdf/package.html"/>
-        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{ProjectionSpecification.java"/>
         <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{GlobalWdbConfiguration.java"/>
+        <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{ProjectionSpecification.java"/>
+        <file path="/wdb-netcdf-java/src/no/met/wdb/netcdf/package.html"/>
         <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.store{DataSummary.java"/>
         <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.store{InvalidRequestException.java"/>
         <javaElement handleIdentifier="=wdb-netcdf-java/src&lt;no.met.wdb.netcdf{ValidTimeHandler.java"/>

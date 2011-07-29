@@ -9,10 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
+import org.jdom.DataConversionException;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+
 
 class GlobalWdbConfiguration {
 
@@ -42,17 +44,22 @@ class GlobalWdbConfiguration {
 		Element global_attributes = wdb_netcdf_config.getChild("global_attributes");
 		globalAttributes = parseAttributes(global_attributes);
 		
-		Element wdb_parameters = wdb_netcdf_config.getChild("wdb_parameters");
-		if ( wdb_parameters != null ) {
-			for ( Element e : (List<Element>) wdb_parameters.getChildren("level_parameter") )
-				addParameterConfiguration(e);
-			for ( Element e : (List<Element>) wdb_parameters.getChildren("value_parameter") )
-				addParameterConfiguration(e);
+		try {
+			Element wdb_parameters = wdb_netcdf_config.getChild("wdb_parameters");
+			if ( wdb_parameters != null ) {
+				for ( Element e : (List<Element>) wdb_parameters.getChildren("level_parameter") )
+					addParameterConfiguration(e);
+				for ( Element e : (List<Element>) wdb_parameters.getChildren("value_parameter") )
+					addParameterConfiguration(e);
+			}
+		}
+		catch ( Exception e ) {
+			throw new IOException(e);
 		}
 	}
 
 	
-	private void addParameterConfiguration(Element e) {
+	private void addParameterConfiguration(Element e) throws DataConversionException {
 		String wdbName = e.getAttributeValue("wdbname");
 		if ( wdbName == null )
 			return; // wtf?
@@ -66,7 +73,7 @@ class GlobalWdbConfiguration {
 		attributes.put(wdbName, parseAttributes(e));
 	}
 	
-	private Vector<ucar.nc2.Attribute> parseAttributes(Element parent) {
+	private Vector<ucar.nc2.Attribute> parseAttributes(Element parent) throws DataConversionException {
 
 		Vector<ucar.nc2.Attribute> ret = new Vector<ucar.nc2.Attribute>();
 		
@@ -75,8 +82,29 @@ class GlobalWdbConfiguration {
 			List<Element> attributes = (List<Element>) parent.getChildren("attribute");
 			for ( Element e : attributes ) {
 				String name = e.getAttribute("name").getValue();
-				String value = e.getAttribute("value").getValue();
-				ret.add(new ucar.nc2.Attribute(name, value));
+				String type = e.getAttribute("type").getValue();
+				if ( type.isEmpty() )
+					type = "String";
+				
+				org.jdom.Attribute value = e.getAttribute("value");
+				if ( type.equals("String") )
+					ret.add(new ucar.nc2.Attribute(name, value.getValue()));
+				else if ( type.equals("double") )
+					ret.add(new ucar.nc2.Attribute(name, value.getDoubleValue()));
+				else if ( type.equals("float") )
+					ret.add(new ucar.nc2.Attribute(name, value.getFloatValue()));
+				else if ( type.equals("int") )
+					ret.add(new ucar.nc2.Attribute(name, value.getIntValue()));
+				else if ( type.equals("short") )
+					ret.add(new ucar.nc2.Attribute(name, (short) value.getIntValue()));
+				else if ( type.equals("char") ) {
+					String val = value.getValue();
+					if ( val.length() > 1 )
+						throw new RuntimeException("Invalid format for (single) char attribute: <" + val + ">");
+					ret.add(new ucar.nc2.Attribute(name, val));
+				}
+				
+				ret.add(new ucar.nc2.Attribute(name, value.getValue()));
 			}
 		}
 		return ret;
