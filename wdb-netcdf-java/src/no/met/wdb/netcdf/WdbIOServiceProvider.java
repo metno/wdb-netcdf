@@ -78,8 +78,6 @@ public class WdbIOServiceProvider extends AbstractIOServiceProvider { // impleme
 	public boolean isValidFile(ucar.unidata.io.RandomAccessFile raf)
 			throws IOException {
 		
-		System.out.println("lol");
-		
 		try {
 			new WdbConfiguration(raf);
 		}
@@ -134,8 +132,6 @@ public class WdbIOServiceProvider extends AbstractIOServiceProvider { // impleme
 
 		//System.out.println("public ucar.ma2.Array readData(Variable(" + v2.getName() + "), Section(" + section.toString() + "))");
 
-		System.out.println("lol2");
-		
 		ucar.ma2.Array ret;
 
 		if ( index.isDatabaseField(v2.getName()) ) {
