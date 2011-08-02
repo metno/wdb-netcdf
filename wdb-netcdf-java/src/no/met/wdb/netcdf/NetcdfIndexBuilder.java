@@ -29,8 +29,8 @@ class NetcdfIndexBuilder {
 		
 		dataHandlers.add(gridHandler);
 		dataHandlers.add(new ReferenceTimeHandler(index));
-		dataHandlers.add(new ValidTimeHandler(index, config));
 		dataHandlers.add(new TimeOffsetHandler(index));
+		dataHandlers.add(new ValidTimeHandler(index, config));
 		dataHandlers.add(new VersionHandler(index));
 		dataHandlers.add(new LevelHandler(index, config));
 	}

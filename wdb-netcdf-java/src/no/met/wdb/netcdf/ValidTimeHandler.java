@@ -33,7 +33,7 @@ class ValidTimeHandler implements DataHandler {
 
 		String timeShape = "";
 		if ( referenceTimes.size() > 1 )
-			timeShape = TimeOffsetHandler.cfName + " " + ReferenceTimeHandler.cfName;
+			timeShape = ReferenceTimeHandler.cfName + " " + TimeOffsetHandler.cfName;
 		else {
 			int validTimeCount = validTimes.size();
 			if ( validTimeCount > 1 )
