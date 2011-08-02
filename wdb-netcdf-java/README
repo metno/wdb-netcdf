@@ -7,3 +7,31 @@ See the overview.html file for information about usage of this library
 
 See http://www.unidata.ucar.edu/software/netcdf-java/ for information about 
 netcdf-java.
+
+
+USAGE WITH THREDDS
+
+In order to use this library with thredds
+(http://www.unidata.ucar.edu/projects/THREDDS/) you need to observe
+the following:
+
+The files for WDB access are xml-formatted descriptions of where to
+find data, instead of the actual data. However, the thredds sever
+will throw weird errors at you if you give these files the suffix
+.xml. It may be better to give these files the suffix .wdbml
+(but any suffix appart from .xml should work just fine).
+
+I order to make thredds support wdb, you must do the following:
+
+1: Drop a wdb-netcdf-java.jar file, along with a postgresql driver
+   (postgresql.jar) into the tomcat's
+   $CATALINA_HOME/webapps/thredds/WEB-INF/lib/ (not
+   $CATALINA_HOME/lib).
+
+2: Add this line under the <nj22Config> tag in the file
+   $CATALINA_HOME/content/thredds/threddsConfig.xml:
+
+   <ioServiceProvider class="no.met.wdb.netcdf.WdbIOServiceProvider"/>
+
+3: Modify $CATALINA_HOME/content/thredds/catalog.xml to give access to
+   your files, as per the thredds documentation.
