@@ -53,25 +53,36 @@ class GlobalWdbConfiguration {
 				for ( Element e : (List<Element>) wdb_parameters.getChildren("value_parameter") )
 					addParameterConfiguration(e);
 			}
+			
+			Element units = wdb_netcdf_config.getChild("units");
+			if ( units != null )
+				for ( Element e : (List<Element>) units.getChildren("translation") )
+					addTranslation(e);
 		}
 		catch ( Exception e ) {
 			throw new IOException(e);
 		}
 	}
 
-	
-	private void addParameterConfiguration(Element e) throws DataConversionException {
+	private void addTranslation(Element e) throws DataConversionException {
 		String wdbName = e.getAttributeValue("wdbname");
 		if ( wdbName == null )
-			return; // wtf?
+			return; // should not happen with well-formed documents
 
 		String cfName = e.getAttributeValue("cfname");
 		if ( cfName != null ) {
 			wdb2cf.put(wdbName, cfName);
 			cf2wdb.put(cfName, wdbName);
 		}
-		
-		attributes.put(wdbName, parseAttributes(e));
+	}
+	
+	private void addParameterConfiguration(Element e) throws DataConversionException {
+
+		addTranslation(e);
+
+		String wdbName = e.getAttributeValue("wdbname");
+		if ( wdbName != null )
+			attributes.put(wdbName, parseAttributes(e));
 	}
 	
 	private Vector<ucar.nc2.Attribute> parseAttributes(Element parent) throws DataConversionException {
@@ -156,7 +167,7 @@ class GlobalWdbConfiguration {
 	 * attributes may be added by other means.
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ucar.nc2.Attribute> getAttributes(String wdbParameter, String defaultUnit) {
+	public List<ucar.nc2.Attribute> getAttributes(String wdbParameter, String wdbUnit) {
 		
 		Vector<ucar.nc2.Attribute> ret;
 		Vector<ucar.nc2.Attribute> config = attributes.get(wdbParameter);
@@ -165,7 +176,7 @@ class GlobalWdbConfiguration {
 		else
 			ret = new Vector<ucar.nc2.Attribute>();
 
-		setAttribute(ret, "units", defaultUnit);
+		setAttribute(ret, "units", cfName(wdbUnit));
 		setAttribute(ret, "standard_name", cfName(wdbParameter));
 		setAttribute(ret, "long_name", wdbParameter);
 		//setAttribute(ret, "_FillValue", Float.NaN);
