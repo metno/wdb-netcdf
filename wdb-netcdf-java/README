@@ -19,7 +19,7 @@ The files for WDB access are xml-formatted descriptions of where to
 find data, instead of the actual data. However, the thredds sever
 will throw weird errors at you if you give these files the suffix
 .xml. It may be better to give these files the suffix .wdbml
-(but any suffix appart from .xml should work just fine).
+(but any suffix apart from .xml should work just fine).
 
 I order to make thredds support wdb, you must do the following:
 
