@@ -120,7 +120,6 @@ public class TestingGridData extends GridData {
 				0,
 				0,
 				d,
-				0,
 				0
 				);
 		
@@ -151,8 +150,7 @@ public class TestingGridData extends GridData {
 			int dataVersion, 
 			int confidenceCode,
 			Date storeTime, 
-			long valueID, 
-			int valueType) {
+			long valueID) {
 		
 		super(value, 
 				dataProviderName, 
@@ -172,8 +170,7 @@ public class TestingGridData extends GridData {
 				dataVersion, 
 				confidenceCode, 
 				storeTime, 
-				valueID, 
-				valueType);
+				valueID);
 	}
 
 }

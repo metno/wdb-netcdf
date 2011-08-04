@@ -69,11 +69,11 @@
 	    <attribute name="standard_name" value="visibility_in_air" />
 	</value_parameter>
 	
-	<value_parameter wdbname="wind velocity (u vector)">
+	<value_parameter wdbname="wind velocity (u vector)" cfname="u_wind">
 	    <attribute name="standard_name" value="x_wind" />
 	</value_parameter>
 	
-	<value_parameter wdbname="wind velocity (v vector)">
+	<value_parameter wdbname="wind velocity (v vector)" cfname="v_wind">
 	    <attribute name="standard_name" value="y_wind" />
 	</value_parameter>
 	
@@ -85,6 +85,9 @@
 	    <attribute name="standard_name" value="y_wind" />
 	</value_parameter>
 
+	<value_parameter wdbname="proportion of land (model)" cfname="land_area_fraction">
+		<attribute name="standard_name" value="land_area_fraction" /> 
+	</value_parameter>
 
 	<!-- 
 	<value_parameter wdbname="local 20th percentile accumulated precipitation surface density">

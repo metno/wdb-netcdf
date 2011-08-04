@@ -30,7 +30,6 @@ public class GridData {
 	private int confidenceCode;
 	private Date storeTime;
 	private long valueID;
-	private int valueType;
 	
 	
 	private Date getDate(ResultSet queryResult, int index) throws SQLException {
@@ -73,7 +72,7 @@ public class GridData {
 		confidenceCode = queryResult.getInt(++i);
 		storeTime = getDate(queryResult, ++i);
 		valueID = queryResult.getLong(++i);
-		valueType = queryResult.getInt(++i);
+		//valueType = queryResult.getInt(++i); // skip this
 	}
 
 	/**
@@ -98,8 +97,7 @@ public class GridData {
 			int dataVersion,
 			int confidenceCode,
 			Date storeTime,
-			long valueID,
-			int valueType
+			long valueID
 	) {
 		this.value = value;
 		this.dataProviderName = dataProviderName;
@@ -118,7 +116,6 @@ public class GridData {
 		this.confidenceCode = confidenceCode;
 		this.storeTime = storeTime;
 		this.valueID = valueID;
-		this.valueType = valueType;
 	}
 	
 	@Override
@@ -126,7 +123,7 @@ public class GridData {
 		String s = " | "; // separator
 		return value+s+dataProviderName+s+placeName+s+placeGeometry+s+referenceTime+s+validTimeFrom+s+validTimeTo
 		+s+validTimeIndeterminateCode+s+valueParameter.getName()+s+valueParameter.getUnit()+s+level.getName()+s+level.getUnit()
-		+s+levelFrom+s+levelTo+s+levelIndeterminateCode+s+dataVersion+s+confidenceCode+s+storeTime+s+valueID+s+valueType;
+		+s+levelFrom+s+levelTo+s+levelIndeterminateCode+s+dataVersion+s+confidenceCode+s+storeTime+s+valueID;
 	}
 
 	public long getValue() {
@@ -207,10 +204,6 @@ public class GridData {
 
 	public long getValueID() {
 		return valueID;
-	}
-
-	public int getValueType() {
-		return valueType;
 	}
 
 
@@ -300,10 +293,5 @@ public class GridData {
 
 	protected void setValueID(long valueID) {
 		this.valueID = valueID;
-	}
-
-
-	protected void setValueType(int valueType) {
-		this.valueType = valueType;
 	}
 }

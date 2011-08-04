@@ -166,8 +166,8 @@ class ProjectionSpecification {
 
 	private ProjectionImpl getObliqueProjection(Map<String, String> definition) {
 
-		for ( Map.Entry<String,String> entry : definition.entrySet() )
-			System.out.println("definition[" + entry.getKey() + "] = " + entry.getValue());
+		//for ( Map.Entry<String,String> entry : definition.entrySet() )
+		//	System.out.println("definition[" + entry.getKey() + "] = " + entry.getValue());
 		
 		String realProjection = definition.get("o_proj");
 		if ( realProjection == null )

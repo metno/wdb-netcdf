@@ -49,10 +49,10 @@ public class WdbConnection {
 	}
 	
 	void begin(String wciUser) throws SQLException {
-		PreparedStatement st = connection.prepareStatement("SELECT * FROM wci.begin(?, ?, ?, ?)");
+		PreparedStatement st = connection.prepareStatement("SELECT * FROM wci.begin(?)");
 		st.setString(1, wciUser);
-		for ( int i = 2; i < 5; i ++ )
-			st.setInt(i, 88);
+//		for ( int i = 2; i < 5; i ++ )
+//			st.setInt(i, 88);
 		st.executeQuery();
 	}
 
@@ -78,7 +78,7 @@ public class WdbConnection {
 
 		Statement st = connection.createStatement();
 		st.setFetchSize(64);
-		//System.out.println(query.toString());
+		System.out.println(query.toString());
 		ResultSet result = st.executeQuery(query.toString());
 
 		Vector<GridData> ret = new Vector<GridData>();
