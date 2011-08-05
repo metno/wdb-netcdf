@@ -95,7 +95,7 @@ class ValidTimeHandler implements DataHandler {
 	public String getCoordinatesAttributes(String cfName) {
 		String wdbName = config.wdbName(cfName);
 		if ( index.hasManyReferenceTimes(wdbName) && index.hasManyValidTimeOffsets(wdbName) )
-			return cfName;
+			return ValidTimeHandler.cfName;
 		return "";
 	}
 }
