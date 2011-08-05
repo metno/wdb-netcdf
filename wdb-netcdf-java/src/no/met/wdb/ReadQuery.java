@@ -88,23 +88,52 @@ public class ReadQuery {
 		out.append("]");
 	}
 
+	private void parameterizeQuery(StringBuilder out, 
+			Iterable<String> dataProvider, 
+			String location,
+			String referenceTime, 
+			String validTime,
+			Iterable<String> parameter, 
+			String level,
+			Iterable<Integer> dataVersion
+	) {
+		
+		createStringArray(dataProvider, out);
+		out.append(", ");
+		
+		out.append(quote(location) + ", ");
+		out.append(referenceTimeQuery(referenceTime) + ", ");
+		out.append(quote(validTime) + ", ");
+		createStringArray(parameter, out);
+		out.append(", ");
+		out.append(quote(level) + ", ");
+		createIntArray(dataVersion, out);
+	}
+	
+	
+	
+	private String referenceTimeQuery(String referenceTime) {
+		
+		if ( referenceTime != null && referenceTime.equals("latest") ) {
+			
+			StringBuilder query = new StringBuilder();
+			query.append("(SELECT referencetime FROM wci.browse(");
+			parameterizeQuery(query, dataProvider, location, null, validTime, parameter, level, dataVersion);
+			query.append(", NULL::wci.browsereferencetime) ORDER BY referencetime DESC LIMIT 1)::text");
+			
+			return query.toString();
+		}
+		
+		return quote(referenceTime);
+	}
 	
 	@Override
 	public String toString() {
 		
 		StringBuilder query = new StringBuilder();
+
 		query.append("SELECT * FROM wci.read(");
-		
-		createStringArray(dataProvider, query);
-		query.append(", ");
-		
-		query.append(quote(location) + ", ");
-		query.append(quote(referenceTime) + ", ");
-		query.append(quote(validTime) + ", ");
-		createStringArray(parameter, query);
-		query.append(", ");
-		query.append(quote(level) + ", ");
-		createIntArray(dataVersion, query);
+		parameterizeQuery(query, dataProvider, location, referenceTime, validTime, parameter, level, dataVersion);
 		query.append(", NULL::wci.returngid)");
 
 		return query.toString();
