@@ -3,6 +3,7 @@ package no.met.wdb.netcdf;
 import java.util.Date;
 import java.util.TreeSet;
 
+import no.met.wdb.store.NameTranslator;
 import no.met.wdb.store.WdbIndex;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
@@ -14,13 +15,13 @@ import ucar.nc2.Variable;
 class ValidTimeHandler implements DataHandler {
 
 	private WdbIndex index;
-	private GlobalWdbConfiguration config;
+	private NameTranslator config;
 	private Array data = null;
 	
 	public static String cfName = "time";
 
 	
-	public ValidTimeHandler(WdbIndex index, GlobalWdbConfiguration config) {
+	public ValidTimeHandler(WdbIndex index, NameTranslator config) {
 		this.index = index;
 		this.config = config;
 	}
@@ -93,8 +94,7 @@ class ValidTimeHandler implements DataHandler {
 
 	@Override
 	public String getCoordinatesAttributes(String cfName) {
-		String wdbName = config.wdbName(cfName);
-		if ( index.hasManyReferenceTimes(wdbName) && index.hasManyValidTimeOffsets(wdbName) )
+		if ( index.hasManyReferenceTimes(cfName) && index.hasManyValidTimeOffsets(cfName) )
 			return ValidTimeHandler.cfName;
 		return "";
 	}

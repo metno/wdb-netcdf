@@ -36,7 +36,7 @@ public class WdbIndexTest {
 
 	
 	private long[] process(String valueParameter, int timeIndex) throws IndexCreationException  {
-		WdbIndex index = new WdbIndex(gridData);
+		WdbIndex index = new WdbIndex(gridData, null);
 		
 		try {
 			return index.getData(valueParameter, 
@@ -138,7 +138,7 @@ public class WdbIndexTest {
 		gridData.add(TestingGridData.get("temperature", "C"));
 		gridData.add(TestingGridData.get("pressure", "pa"));
 		
-		WdbIndex index = new WdbIndex(gridData);
+		WdbIndex index = new WdbIndex(gridData, null);
 		
 		long[] data = index.getData("temperature", new Range(1), new Range(1), new Range(1), new Range(1));
 		assertEquals(1, data.length);

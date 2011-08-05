@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import no.met.wdb.GridData;
 import no.met.wdb.store.IndexCreationException;
+import no.met.wdb.store.NameTranslator;
 import no.met.wdb.store.WdbIndex;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
@@ -37,7 +38,7 @@ class NetcdfIndexBuilder {
 	
 	public NetcdfIndexBuilder(Iterable<GridData> gridData, GlobalWdbConfiguration config) throws IndexCreationException {
 
-		index = new WdbIndex(gridData);
+		index = new WdbIndex(gridData, config);
 		this.config = config;
 
 		setupHandlers(gridData);
@@ -50,7 +51,7 @@ class NetcdfIndexBuilder {
 		index = null;
 		this.config = config;
 	}
-	
+
 	/**
 	 * For testing, create and throw away a WdbIndex object.
 	 * 
@@ -58,7 +59,8 @@ class NetcdfIndexBuilder {
 	 * @param out the object to be populated
 	 */
 	void populate(List<GridData> gridData, NetcdfFile out) throws IndexCreationException {
-		index = new WdbIndex(gridData);
+		
+		index = new WdbIndex(gridData, null);
 		setupHandlers(gridData);
 		populate(out);
 	}
@@ -93,13 +95,11 @@ class NetcdfIndexBuilder {
 	 * Does the given variable name refer to a wdb parameter?
 	 */
 	public boolean isDatabaseField(String variableName) {
-		return index.hasParameter(config.wdbName(variableName));
+		return index.hasParameter(variableName);
 	}
 
 	public long[] getGridIdentifiers(Variable variable, Section section) {
 			
-		String parameter = config.wdbName(variable.getName());
-
 		 // Remove x/y dimensions
 		// and copy to a vector, to allow calling add(idx, ...) on it
 		List<Range> sectionRanges = section.getRanges(); 
@@ -108,23 +108,23 @@ class NetcdfIndexBuilder {
 		
 		Range oneElementRange = new Range(1);
 		int idx = 0;
-		if ( ! index.hasManyReferenceTimes(parameter) )
+		if ( ! index.hasManyReferenceTimes(variable.getName()) )
 			ranges.add(idx, oneElementRange);
 		idx ++;
-		if ( ! index.hasManyValidTimeOffsets(parameter) )
+		if ( ! index.hasManyValidTimeOffsets(variable.getName()) )
 			ranges.add(idx, oneElementRange);
 		idx ++;
-		if ( ! index.hasManyLevels(parameter) )
+		if ( ! index.hasManyLevels(variable.getName()) )
 			ranges.add(idx, oneElementRange);
 		idx ++;
-		if ( ! index.hasManyVersions(parameter) )
+		if ( ! index.hasManyVersions(variable.getName()) )
 			ranges.add(idx, oneElementRange);
 			
 		if ( ranges.size() != 4 )
 			throw new RuntimeException("Internal error: Generated " + ranges.size() + " indices. Needed 4");
 		
 		
-		long[] ret = index.getData(parameter, ranges.get(0), ranges.get(1), ranges.get(2), ranges.get(3));
+		long[] ret = index.getData(variable.getName(), ranges.get(0), ranges.get(1), ranges.get(2), ranges.get(3));
 		
 		return ret;
 	}
@@ -150,7 +150,7 @@ class NetcdfIndexBuilder {
 				ret = addToString(ret, ValidTimeHandler.cfName);
 		}
 		if ( index.hasManyLevels(parameter) )
-			ret = addToString(ret, config.cfName(index.getLevelForParameter(parameter).getName()));
+			ret = addToString(ret, config.translate(index.getLevelForParameter(parameter).getName()));
 		if ( index.hasManyVersions(parameter) )
 			ret = addToString(ret, VersionHandler.cfName);
 	
@@ -169,7 +169,7 @@ class NetcdfIndexBuilder {
 
 		for ( String parameter : index.allParameters() ) {
 
-			String cfName = config.cfName(parameter);
+			String cfName = config.translate(parameter);
 
 			Variable var = new Variable(out, null, null, cfName);
 			var.setDataType(DataType.FLOAT);

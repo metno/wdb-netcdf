@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
+import no.met.wdb.store.NameTranslator;
+
 import org.jdom.DataConversionException;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -16,7 +18,7 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 
-class GlobalWdbConfiguration {
+class GlobalWdbConfiguration implements NameTranslator {
 
 	private HashMap<String, String> wdb2cf = new HashMap<String, String>();
 	private HashMap<String, String> cf2wdb = new HashMap<String, String>();
@@ -125,11 +127,12 @@ class GlobalWdbConfiguration {
 	
 	
 	/**
-	 * Translate a wdb parameter name (value- or level-) into a cf standard
-	 * name. If no explicit translations are given in configuration - make
-	 * a guess.
+	 * Translate a wdb parameter name (value- or level-) into a a cf standard 
+	 * name. If no explicit translations are given in configuration - make a 
+	 * guess.
 	 */
-	public String cfName(String wdbName) {
+	@Override
+	public String translate(String wdbName) {
 		String specialTranslation = wdb2cf.get(wdbName);
 		if ( specialTranslation == null )
 			return defaultCfName(wdbName);
@@ -137,20 +140,9 @@ class GlobalWdbConfiguration {
 	}
 	
 	private static String defaultCfName(String wdbName) {
-		return wdbName.replace(' ', '_');
+		return wdbName.replaceAll("[ ()]", "_");
 	}
 
-	/**
-	 * Translate a cf standard name (value- or level-) into a wdb parameter
-	 * name. If no explicit translations are given in configuration - make
-	 * a guess.
-	 */
-	public String wdbName(String cfName) {
-		String specialTranslation = cf2wdb.get(cfName);
-		if ( specialTranslation == null )
-			return cfName.replace('_', ' ');
-		return specialTranslation;
-	}
 
 	private void setAttribute(Vector<ucar.nc2.Attribute> out, String name, String value)
 	{
@@ -176,8 +168,8 @@ class GlobalWdbConfiguration {
 		else
 			ret = new Vector<ucar.nc2.Attribute>();
 
-		setAttribute(ret, "units", cfName(wdbUnit));
-		setAttribute(ret, "standard_name", cfName(wdbParameter));
+		setAttribute(ret, "units", translate(wdbUnit));
+		setAttribute(ret, "standard_name", translate(wdbParameter));
 		setAttribute(ret, "long_name", wdbParameter);
 		//setAttribute(ret, "_FillValue", Float.NaN);
 

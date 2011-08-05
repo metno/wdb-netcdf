@@ -38,7 +38,7 @@ class LevelHandler implements DataHandler {
 				Vector<Float> levels = index.levelsForParameter(parameter);
 				if ( levels.size() > 1 ) {
 			
-					String dimension = config.cfName(lvl.getName());
+					String dimension = config.translate(lvl.getName());
 
 					out.addDimension(null, new Dimension(dimension, levels.size()));
 
@@ -62,7 +62,7 @@ class LevelHandler implements DataHandler {
 	@Override
 	public Array getData(Variable variable) {
 		
-		TreeSet<Float> levels = index.getLevelValues(config.wdbName(variable.getName()));
+		TreeSet<Float> levels = index.getLevelValues(variable.getName());
 
 		int[] shape = new int[1];
 		shape[0] = levels.size();
@@ -80,7 +80,7 @@ class LevelHandler implements DataHandler {
 	@Override
 	public boolean canHandle(Variable variable) {
 
-		return index.hasLevel(config.wdbName(variable.getName()));
+		return index.hasLevel(variable.getName());
 	}
 
 	@Override

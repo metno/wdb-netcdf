@@ -85,10 +85,10 @@
 	    <attribute name="standard_name" value="y_wind" />
 	</value_parameter>
 
-	<value_parameter wdbname="proportion of land (model)" cfname="land_area_fraction">
+<!-- 	<value_parameter wdbname="proportion of land (model)" cfname="land_area_fraction">
 		<attribute name="standard_name" value="land_area_fraction" /> 
 	</value_parameter>
-
+ -->
 	<!-- 
 	<value_parameter wdbname="local 20th percentile accumulated precipitation surface density">
 	    <attribute name="units" value= />

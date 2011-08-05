@@ -9,6 +9,7 @@ import java.util.Vector;
 import no.met.wdb.GridData;
 import no.met.wdb.Level;
 import no.met.wdb.store.IndexCreationException;
+import no.met.wdb.store.NameTranslator;
 import no.met.wdb.test.TestingGridData;
 
 import org.junit.Before;
@@ -24,7 +25,7 @@ public class NetcdfIndexBuilderTest {
 	private NetcdfIndexBuilder indexBuilder;
 	private Vector<GridData> gridData = new Vector<GridData>();
 
-	private GlobalWdbConfiguration translator = new GlobalWdbConfiguration();
+	private NameTranslator translator = new GlobalWdbConfiguration();
 	
 	@Before
 	public void setUp() throws Exception {
@@ -62,7 +63,7 @@ public class NetcdfIndexBuilderTest {
 		assertEquals(1, timeDimensions.size());
 		assertEquals("time", timeDimensions.get(0).getName());
 		
-		Variable param = ncfile.findTopVariable(translator.cfName(TestingGridData.defaultValueParameter));
+		Variable param = ncfile.findTopVariable(translator.translate(TestingGridData.defaultValueParameter));
 		assertTrue(param != null);
 		List<Dimension> paramDimensions = param.getDimensions();
 		assertEquals(2, paramDimensions.size());
@@ -76,7 +77,7 @@ public class NetcdfIndexBuilderTest {
 		gridData.add(TestingGridData.get(lvl, 1));
 		indexBuilder.populate(gridData, ncfile);
 
-		String cdlLevel = translator.cfName("lvl");
+		String cdlLevel = translator.translate("lvl");
 		
 		List<Dimension> dims = ncfile.getDimensions();
 		Dimension lvlDimension = null;
@@ -95,7 +96,7 @@ public class NetcdfIndexBuilderTest {
 		assertEquals(1, lvlDimensions.size());
 		assertEquals(cdlLevel, lvlDimensions.get(0).getName());
 		
-		Variable param = ncfile.findTopVariable(translator.cfName(TestingGridData.defaultValueParameter));
+		Variable param = ncfile.findTopVariable(translator.translate(TestingGridData.defaultValueParameter));
 		assertFalse(param == null);
 		List<Dimension> paramDimensions = param.getDimensions();
 		assertEquals(3, paramDimensions.size());
@@ -109,17 +110,17 @@ public class NetcdfIndexBuilderTest {
 		gridData.add(TestingGridData.get("precipitation", "mm"));
 		indexBuilder.populate(gridData, ncfile);
 
-		Variable param = ncfile.findTopVariable(translator.cfName("air temperature"));
+		Variable param = ncfile.findTopVariable(translator.translate("air temperature"));
 		assertTrue(param != null);
 		List<Dimension> paramDimensions = param.getDimensions();
 		assertEquals(2, paramDimensions.size());
 
-		param = ncfile.findTopVariable(translator.cfName("air pressure"));
+		param = ncfile.findTopVariable(translator.translate("air pressure"));
 		assertTrue(param != null);
 		paramDimensions = param.getDimensions();
 		assertEquals(2, paramDimensions.size());
 
-		param = ncfile.findTopVariable(translator.cfName("precipitation"));
+		param = ncfile.findTopVariable(translator.translate("precipitation"));
 		assertTrue(param != null);
 		paramDimensions = param.getDimensions();
 		assertEquals(2, paramDimensions.size());
@@ -132,7 +133,7 @@ public class NetcdfIndexBuilderTest {
 		gridData.add(TestingGridData.get(1));
 		indexBuilder.populate(gridData, ncfile);
 
-		Variable param = ncfile.findTopVariable(translator.cfName(TestingGridData.defaultValueParameter));
+		Variable param = ncfile.findTopVariable(translator.translate(TestingGridData.defaultValueParameter));
 		assertTrue(param != null);
 		List<Dimension> paramDimensions = param.getDimensions();
 		assertEquals(3, paramDimensions.size());
@@ -149,13 +150,13 @@ public class NetcdfIndexBuilderTest {
 		gridData.add(TestingGridData.get(2, "air pressure", "pa"));
 		indexBuilder.populate(gridData, ncfile);
 		
-		Variable param = ncfile.findTopVariable(translator.cfName("air temperature"));
+		Variable param = ncfile.findTopVariable(translator.translate("air temperature"));
 		assertTrue(param != null);
 		List<Dimension> paramDimensions = param.getDimensions();
 		assertEquals(3, paramDimensions.size());
 		assertEquals("time", paramDimensions.get(0).getName());
 
-		param = ncfile.findTopVariable(translator.cfName("air pressure"));
+		param = ncfile.findTopVariable(translator.translate("air pressure"));
 		assertTrue(param != null);
 		paramDimensions = param.getDimensions();
 		assertEquals(3, paramDimensions.size());
