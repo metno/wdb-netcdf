@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Class-Path: postgresql.jar
 Name: wdb-netcdf-java
 Specification-Title: “wdb for netcdf-java”
-Specification-Version: “0.1.1”
+Specification-Version: “0.1.2”
 Specification-Vendor: “met.no”
 Package-Title: “no.met.wdb.netcdf”
 Package-Version: “1”
