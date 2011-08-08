@@ -39,60 +39,59 @@ public class ProjectionFactoryTest {
 	@Test
 	public void testUtmProjectionZone33() {
 		ProjectionImpl impl = ProjectionSpecification.getProjection("+proj=utm +zone=33 +ellps=WGS84 +datum=WGS84 +units=m +no_defs");
-		LatLonPoint p = impl.projToLatLon(10, 20);
+		LatLonPoint p = impl.projToLatLon(516.88, 7620.4);
 		
 		System.out.println(p.toString());
 
-		assertEquals(10.511346, p.getLongitude(), e); 
-		assertEquals(0.00018, p.getLatitude(), e);
+		assertEquals(15.4162, p.getLongitude(), e); 
+		assertEquals(68.6949, p.getLatitude(), e);
 	}
 
 	@Test
 	public void testUtmProjectionZone32() {
 		ProjectionImpl impl = ProjectionSpecification.getProjection("+proj=utm +zone=32 +ellps=WGS84 +datum=WGS84 +units=m +no_defs");
-		LatLonPoint p = impl.projToLatLon(10, 20);
+		LatLonPoint p = impl.projToLatLon(615.56, 6546.58);
 		
 		System.out.println(p.toString());
 		
-		assertEquals(4.511346, p.getLongitude(), e);
-		assertEquals(0.00018, p.getLatitude(), e);
+		assertEquals(11.0142, p.getLongitude(), e);
+		assertEquals(59.0430, p.getLatitude(), e);
 	}
 
-@Test
-public void testStereoGraphicProjection() {
+
+	@Test
+	public void testStereoGraphicProjection() {
+		
+		ProjectionImpl impl = ProjectionSpecification.getProjection("+proj=stere +lat_0=90 +lon_0=58 +lat_ts=60 +a=6371000 +units=m +no_defs");
+		LatLonPoint p = impl.projToLatLon(-2452.000, -1952.000);
 	
-	ProjectionImpl impl = ProjectionSpecification.getProjection("+proj=stere +lat_0=90 +lon_0=58 +lat_ts=60 +a=6371000 +units=m +no_defs");
-	LatLonPoint p = impl.projToLatLon(-2452.000, -1952.000);
-
-	assertEquals(6.52276459393507, p.getLongitude(), e);
-	assertEquals(60.4627127507448, p.getLatitude(), e);
-}
-
-@Test
-public void testStereoGraphicProjection2() {
+		assertEquals(6.52276459393507, p.getLongitude(), e);
+		assertEquals(60.4627127507448, p.getLatitude(), e);
+	}
 	
-	ProjectionImpl impl = ProjectionSpecification.getProjection("+proj=stere +lat_0=90 +lon_0=58 +lat_ts=60 +a=6371000 +units=m +no_defs");
-	LatLonPoint p = impl.projToLatLon(-1704.000, -1504.000);
-
-	assertEquals(9.43256110381849, p.getLongitude(), e);
-	assertEquals(68.3538736322542, p.getLatitude(), e);
-}
-
-@Test
-public void testStereoGraphicProjection3() {
+	@Test
+	public void testStereoGraphicProjection2() {
+		
+		ProjectionImpl impl = ProjectionSpecification.getProjection("+proj=stere +lat_0=90 +lon_0=58 +lat_ts=60 +a=6371000 +units=m +no_defs");
+		LatLonPoint p = impl.projToLatLon(-1704.000, -1504.000);
 	
-	// Units is not supported!
+		assertEquals(9.43256110381849, p.getLongitude(), e);
+		assertEquals(68.3538736322542, p.getLatitude(), e);
+	}
 	
-	ProjectionImpl impl = ProjectionSpecification.getProjection("+proj=stere +lat_0=90 +lon_0=58 +lat_ts=60 +a=6371000 +units=m +no_defs");
-	ProjectionPoint p = impl.latLonToProj(68.3538736322542, 9.43256110381849);
-
+	@Test
+	public void testStereoGraphicProjection3() {
+		
+		// Units is not supported!
+		
+		ProjectionImpl impl = ProjectionSpecification.getProjection("+proj=stere +lat_0=90 +lon_0=58 +lat_ts=60 +a=6371000 +units=m +no_defs");
+		ProjectionPoint p = impl.latLonToProj(68.3538736322542, 9.43256110381849);
 	
-	for ( Parameter pm : impl.getProjectionParameters() )
-		System.out.println("\t" + pm);
-	
-	assertEquals(-1704.000, p.getX(), e);
-	assertEquals(-1504.000, p.getY(), e);
-}
-
-
+		
+		for ( Parameter pm : impl.getProjectionParameters() )
+			System.out.println("\t" + pm);
+		
+		assertEquals(-1704.000, p.getX(), e);
+		assertEquals(-1504.000, p.getY(), e);
+	}
 }
