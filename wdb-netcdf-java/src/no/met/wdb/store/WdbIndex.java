@@ -22,19 +22,23 @@ public class WdbIndex {
 	TreeSet<Long> allValidtimes = new TreeSet<Long>();
 	TreeSet<Date> allReferenceTimes = new TreeSet<Date>();
 	HashMap<String, String> parameterToUnit = new HashMap<String, String>();
+	
+	private NameTranslator translator;
 
-	private class SimpleTranslator implements NameTranslator {
+	class SimpleTranslator implements NameTranslator {
 		@Override
 		public String translate(String wdbName) {
 			return wdbName.replace(' ', '_');
 		}
 	}
 
-	public WdbIndex(Iterable<GridData> gridData, NameTranslator translator)
+	public WdbIndex(Iterable<GridData> gridData, NameTranslator nameTranslator)
 			throws DuplicateDataException, IndexCreationException {
 
-		if (translator == null)
+		if (nameTranslator == null)
 			translator = new SimpleTranslator();
+		else
+			translator = nameTranslator;
 
 		HashMap<String, DataSummary> dataSummary = new HashMap<String, DataSummary>();
 
@@ -204,6 +208,14 @@ public class WdbIndex {
 		return parameterData(parameter).getVersions().size() > 1;
 	}
 
+	/**
+	 * Get access to the translator instance that was used to translate wdb 
+	 * names into cf names. 
+	 */
+	public NameTranslator getTranslator() {
+		return translator;
+	}
+	
 	private ParameterData parameterData(String parameter) {
 		ParameterData ret = data.get(parameter);
 		if (ret == null)

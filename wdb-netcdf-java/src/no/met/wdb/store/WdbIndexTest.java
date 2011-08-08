@@ -36,14 +36,18 @@ public class WdbIndexTest {
 
 	
 	private long[] process(String valueParameter, int timeIndex) throws IndexCreationException  {
+		
 		WdbIndex index = new WdbIndex(gridData, null);
 		
+		NameTranslator tr = index.getTranslator();
+		String cfParameter = tr.translate(valueParameter);
+		
 		try {
-			return index.getData(valueParameter, 
+			return index.getData(cfParameter, 
 					new Range(index.getAllReferenceTimes().size()), 
 					new Range(timeIndex, timeIndex), 
-					new Range(index.hasManyLevels(valueParameter) ? index.levelsForParameter(valueParameter).size() : 1), 
-					new Range(index.versionsForParameter(valueParameter).size()));
+					new Range(index.hasManyLevels(cfParameter) ? index.levelsForParameter(cfParameter).size() : 1), 
+					new Range(index.versionsForParameter(cfParameter).size()));
 		} catch (InvalidRangeException e) {
 			throw new RuntimeException(e); // should never happen
 		}
