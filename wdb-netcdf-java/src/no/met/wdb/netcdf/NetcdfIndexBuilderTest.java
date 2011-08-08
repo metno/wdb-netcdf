@@ -59,9 +59,11 @@ public class NetcdfIndexBuilderTest {
 
 		Variable timeVariable = ncfile.findTopVariable("time");
 		assertTrue(timeVariable != null);
-		List<Dimension> timeDimensions = timeVariable.getDimensions();
-		assertEquals(1, timeDimensions.size());
-		assertEquals("time", timeDimensions.get(0).getName());
+		
+		// There should be no dimension variables connected to this, since there is only a single time
+		//List<Dimension> timeDimensions = timeVariable.getDimensions();
+		//assertEquals(1, timeDimensions.size());
+		//assertEquals("time", timeDimensions.get(0).getName());
 		
 		Variable param = ncfile.findTopVariable(translator.translate(TestingGridData.defaultValueParameter));
 		assertTrue(param != null);
