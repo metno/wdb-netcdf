@@ -21,6 +21,8 @@ public class Grid {
 	private float startY;
 	private String projDefinition;
 	
+	private static final boolean expectNetworkOrderBytes = false;
+	
 	Grid(ResultSet queryResult) throws SQLException {
 
 		int i = 1;
@@ -38,11 +40,17 @@ public class Grid {
 		
 		try {
 			DataInputStream gridStream = new DataInputStream(queryResult.getBinaryStream(1));
-			
-			for ( int j = 0; j < size; ++ j ) {
-				int val = gridStream.readInt();
-				val = Integer.reverseBytes(val);
-				grid[j] = Float.intBitsToFloat(val);
+	
+			if ( expectNetworkOrderBytes ) {
+				for ( int j = 0; j < size; ++ j )
+					grid[j] = gridStream.readFloat();
+			}
+			else {
+				for ( int j = 0; j < size; ++ j ) {
+					int val = gridStream.readInt();
+					val = Integer.reverseBytes(val);
+					grid[j] = Float.intBitsToFloat(val);
+				}
 			}
 		}
 		catch ( IOException e ) {
