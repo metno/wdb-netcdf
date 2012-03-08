@@ -57,7 +57,7 @@ public class NetcdfIndexBuilderTest {
 		gridData.add(TestingGridData.get());
 		indexBuilder.populate(gridData, ncfile);
 
-		Variable timeVariable = ncfile.findTopVariable("time");
+		Variable timeVariable = ncfile.findVariable("time");
 		assertTrue(timeVariable != null);
 		
 		// There should be no dimension variables connected to this, since there is only a single time
@@ -65,7 +65,7 @@ public class NetcdfIndexBuilderTest {
 		//assertEquals(1, timeDimensions.size());
 		//assertEquals("time", timeDimensions.get(0).getName());
 		
-		Variable param = ncfile.findTopVariable(translator.translate(TestingGridData.defaultValueParameter));
+		Variable param = ncfile.findVariable(translator.translate(TestingGridData.defaultValueParameter));
 		assertTrue(param != null);
 		List<Dimension> paramDimensions = param.getDimensions();
 		assertEquals(2, paramDimensions.size());
@@ -92,13 +92,13 @@ public class NetcdfIndexBuilderTest {
 		assertFalse(lvlDimension == null);
 		assertEquals(2, lvlDimension.getLength());
 		
-		Variable lvlVariable = ncfile.findTopVariable(cdlLevel);
+		Variable lvlVariable = ncfile.findVariable(cdlLevel);
 		assertFalse(lvlVariable == null);
 		List<Dimension> lvlDimensions = lvlVariable.getDimensions();
 		assertEquals(1, lvlDimensions.size());
 		assertEquals(cdlLevel, lvlDimensions.get(0).getName());
 		
-		Variable param = ncfile.findTopVariable(translator.translate(TestingGridData.defaultValueParameter));
+		Variable param = ncfile.findVariable(translator.translate(TestingGridData.defaultValueParameter));
 		assertFalse(param == null);
 		List<Dimension> paramDimensions = param.getDimensions();
 		assertEquals(3, paramDimensions.size());
@@ -112,17 +112,17 @@ public class NetcdfIndexBuilderTest {
 		gridData.add(TestingGridData.get("precipitation", "mm"));
 		indexBuilder.populate(gridData, ncfile);
 
-		Variable param = ncfile.findTopVariable(translator.translate("air temperature"));
+		Variable param = ncfile.findVariable(translator.translate("air temperature"));
 		assertTrue(param != null);
 		List<Dimension> paramDimensions = param.getDimensions();
 		assertEquals(2, paramDimensions.size());
 
-		param = ncfile.findTopVariable(translator.translate("air pressure"));
+		param = ncfile.findVariable(translator.translate("air pressure"));
 		assertTrue(param != null);
 		paramDimensions = param.getDimensions();
 		assertEquals(2, paramDimensions.size());
 
-		param = ncfile.findTopVariable(translator.translate("precipitation"));
+		param = ncfile.findVariable(translator.translate("precipitation"));
 		assertTrue(param != null);
 		paramDimensions = param.getDimensions();
 		assertEquals(2, paramDimensions.size());
@@ -135,7 +135,7 @@ public class NetcdfIndexBuilderTest {
 		gridData.add(TestingGridData.get(1));
 		indexBuilder.populate(gridData, ncfile);
 
-		Variable param = ncfile.findTopVariable(translator.translate(TestingGridData.defaultValueParameter));
+		Variable param = ncfile.findVariable(translator.translate(TestingGridData.defaultValueParameter));
 		assertTrue(param != null);
 		List<Dimension> paramDimensions = param.getDimensions();
 		assertEquals(3, paramDimensions.size());
@@ -152,13 +152,13 @@ public class NetcdfIndexBuilderTest {
 		gridData.add(TestingGridData.get(2, "air pressure", "pa"));
 		indexBuilder.populate(gridData, ncfile);
 		
-		Variable param = ncfile.findTopVariable(translator.translate("air temperature"));
+		Variable param = ncfile.findVariable(translator.translate("air temperature"));
 		assertTrue(param != null);
 		List<Dimension> paramDimensions = param.getDimensions();
 		assertEquals(3, paramDimensions.size());
 		assertEquals("time", paramDimensions.get(0).getName());
 
-		param = ncfile.findTopVariable(translator.translate("air pressure"));
+		param = ncfile.findVariable(translator.translate("air pressure"));
 		assertTrue(param != null);
 		paramDimensions = param.getDimensions();
 		assertEquals(3, paramDimensions.size());

@@ -23,6 +23,7 @@
 	<translation wdbname="Pa" cfname="Pa"/>
 	<translation wdbname="s" cfname="s"/>
 	<translation wdbname="W/m2" cfname="W m-2"/>
+	<translation wdbname="none" cfname="1"/>
 </units>
 
 <wdb_parameters>

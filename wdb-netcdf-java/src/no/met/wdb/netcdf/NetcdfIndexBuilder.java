@@ -179,7 +179,7 @@ class NetcdfIndexBuilder {
 			
 			for ( Attribute attr : config.getAttributes(parameter, index.unitForParameter(parameter)) )
 				var.addAttribute(attr);
-			var.addAttribute(new Attribute("FillValue", Float.NaN));
+			var.addAttribute(new Attribute("_FillValue", Float.NaN));
 
 			String coordinates = "";
 			for ( DataHandler handler : dataHandlers ) {

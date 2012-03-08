@@ -38,7 +38,7 @@ class VersionHandler implements DataHandler {
 				Variable var = new Variable(out, null, null, cfName, DataType.INT, cfName);
 	
 				var.addAttribute(new Attribute("long_name", "ensemble run number"));
-				//var.addAttribute(new Attribute("standard_name", "ensemble_member"));
+				var.addAttribute(new Attribute("standard_name", "realization"));
 				//var.addAttribute(new Attribute("axis", "Ensemble"));
 	
 				out.addVariable(null, var);
